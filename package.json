@@ -1,0 +1,14 @@
+{
+    "name": "test-bitter-jester-data-transfer",
+    "version": "1.0.0",
+    "description": "Test app to transfer data from bitter jester jotform account to custom localized storage.",
+    "main": "index.js",
+    "scripts": {
+        "test": "npm test"
+    },
+    "author": "Spencer Kasper",
+    "license": "ISC",
+    "dependencies": {
+        "jest": "25.1.0"
+    }
+}
