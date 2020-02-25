@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:
+  LambdaBasicAccessRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        -
+          PolicyName: "LambdaBasicAccessRolePolicy"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+              Resource: "*"
+  WriteToS3FromJotForm:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: WriteToS3FromJotForm
+      CodeUri: ./
+      Handler: "lambdaHandler.handler"
+      Runtime: "nodejs12.x"
+      Role: !GetAtt LambdaBasicAccessRole.Arn
+      Timeout: 1000
+Outputs:
+  AllSecurityGroups:
+    Description: Security Groups that are associated with the Lambda
+    Value:
+      Fn::Join:
+      - ", "
+      - Fn::GetAtt:
+        - AllSecurityGroups
+        - Value
