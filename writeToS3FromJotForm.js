@@ -38,16 +38,14 @@ class S3Client {
         filename,
         contents
     ) {
-        const request = {
+        return {
             Bucket: location,
             Key: filename,
             Body: contents,
             ContentType: 'application/json; charset=utf-8',
             ACL: 'public-read',
             CacheControl: 'max-age=60'
-        }
-
-        return request;
+        };
     }
 }
 

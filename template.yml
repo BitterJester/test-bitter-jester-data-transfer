@@ -27,20 +27,12 @@ Resources:
               - logs:PutLogEvents
               Resource: "*"
   WriteToS3FromJotForm:
-    Type: AWS::Serverless::Function
+    Type: AWS::Lambda::Function
     Properties:
       FunctionName: WriteToS3FromJotForm
-      CodeUri: ./
+      Code:
+          ZipFile: "./test-bitter-jester-data-transfer.zip"
       Handler: "lambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
-      Timeout: 1000
-Outputs:
-  AllSecurityGroups:
-    Description: Security Groups that are associated with the Lambda
-    Value:
-      Fn::Join:
-      - ", "
-      - Fn::GetAtt:
-        - AllSecurityGroups
-        - Value
+      Timeout: 900
