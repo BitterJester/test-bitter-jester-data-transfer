@@ -31,7 +31,8 @@ Resources:
     Properties:
       FunctionName: WriteToS3FromJotForm
       Code:
-          ZipFile: "./test-bitter-jester-data-transfer.zip"
+          S3Bucket: "bitter-jester-test"
+          S3Key: "write-to-s3-from-jotform/test-bitter-jester-data-transfer.zip"
       Handler: "lambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
