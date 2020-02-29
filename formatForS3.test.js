@@ -1,6 +1,6 @@
-import format  from 'formatForS3.js';
+const formatForS3 = require('./formatForS3');
 
-describe(() => {
+describe('FormatForS3', () => {
     const s3Response = [
         {
             answers: [
@@ -14,7 +14,7 @@ describe(() => {
         }
     ];
 
-    const actual = format(s3Response);
+    const actual = formatForS3.format(s3Response);
 
     it('should return a name from the response', () => {
         expect(actual.bandName).toEqual('bandName');

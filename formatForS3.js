@@ -1,3 +1,7 @@
-export default function(s3Response) {
+const format = () => {
     return null;
-};
+}
+
+module.exports = {
+    format: format
+}
