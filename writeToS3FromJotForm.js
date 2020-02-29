@@ -2,6 +2,7 @@ require('dotenv').config();
 const AWS = require('aws-sdk');
 const fs = require('fs');
 const jotform = require('jotform');
+const formatForS3 = require('formatForS3');
 
 const JOTFORM_API_KEY = process.env.JOTFORM_API_KEY;
 const AWS_ACCESS_ID = process.env.AWS_ACCESS_ID;
@@ -25,10 +26,10 @@ class S3Client {
         return new Promise((resolve, reject) => {
             this.client.putObject(request, (error, data) => {
                 if (error) {
-                    return reject(error)
+                    return reject(error);
                 }
 
-                return resolve(data)
+                return resolve(data);
             })
         })
     }
@@ -60,12 +61,16 @@ jotform.options({
 async function getFormSubmissions() {
     await jotform.getFormSubmissions(BITTER_JESTER_TEST_FORM_ID)
         .then(async function(response) {
+            console.log(response);
+            const formattedResponse = formatForS3.format(response);
             const s3PutRequest = s3Client.createPutPublicJsonRequest(
                 s3Bucket,
                 'bitter-jester-test.json',
-
+                JSON.stringify(formattedResponse)
             );
+            console.log('finished making request');
             await s3Client.put(s3PutRequest);
+            console.log('finished put');
         })
         .fail(function(error) {
             console.log(`Error: ${error}`);
