@@ -1,12 +1,18 @@
 const format = (s3Response) => {
-    const getAnswerByQuestionId = (questionIdAsString) => {
-        return s3Response[0].answers[questionIdAsString].answer;
+    const applicationAnswersBySubmission = s3Response.map(application => {
+        return application.answers;
+    });
+
+    const getAnswerByQuestionId = (applicationAnswers, questionIdAsString) => {
+        return applicationAnswers[questionIdAsString].answer;
     };
 
-    return {
-        bandName: getAnswerByQuestionId('39'),
-        primaryEmailAddress: getAnswerByQuestionId('289')
-    };
+    return applicationAnswersBySubmission.map(answersForBand => {
+        return {
+            bandName: getAnswerByQuestionId(answersForBand, '39'),
+            primaryEmailAddress: getAnswerByQuestionId(answersForBand, '289')
+        };
+    });
 }
 
 module.exports = {
