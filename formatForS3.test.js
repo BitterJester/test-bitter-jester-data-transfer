@@ -1,7 +1,7 @@
 const formatForS3 = require('./formatForS3');
 
 describe('FormatForS3', () => {
-    const buildAnswers = (bandName, email, firstChoiceDate) => {
+    const buildAnswers = (bandName, email, firstChoiceDate, secondChoiceDate) => {
         const buildSingleAnswer = (name, answer) => {
             return {
                 name: name,
@@ -11,16 +11,17 @@ describe('FormatForS3', () => {
         return {
             "39": buildSingleAnswer("retypeYour", bandName),
             "289": buildSingleAnswer("retypeYour289", email),
-            "77": buildSingleAnswer("selectYour77", firstChoiceDate)
+            "77": buildSingleAnswer("selectYour77", firstChoiceDate),
+            "78": buildSingleAnswer("selectYour", secondChoiceDate)
         };
     };
 
     const s3Response = [
         {
-            answers: buildAnswers("bandName", "email", "1stChoiceDate")
+            answers: buildAnswers("bandName", "email", "1stChoiceDate", "2ndChoiceDate")
         },
         {
-            answers: buildAnswers("bandName2", "email2", undefined)
+            answers: buildAnswers("bandName2", "email2", undefined, undefined)
         }
     ];
 
@@ -38,6 +39,10 @@ describe('FormatForS3', () => {
         expect(actual[0].firstChoiceFridayNight).toEqual('1stChoiceDate');
     });
 
+    it('should return a 2nd choice date from the response', () => {
+        expect(actual[0].secondChoiceFridayNight).toEqual('2ndChoiceDate');
+    });
+
     it('should return a primary email for band 2', () => {
         expect(actual[1].bandName).toEqual('bandName2');
     });
@@ -48,5 +53,9 @@ describe('FormatForS3', () => {
 
     it('should return an empty string for undefined firstChoiceDate for band 2', () => {
         expect(actual[1].firstChoiceFridayNight).toEqual('');
+    });
+
+    it('should return an empty string for undefined secondChoiceDate for band 2', () => {
+        expect(actual[1].secondChoiceFridayNight).toEqual('');
     });
 });
