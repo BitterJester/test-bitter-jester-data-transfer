@@ -27,35 +27,39 @@ describe('FormatForS3', () => {
 
     const actual = formatForS3.format(s3Response);
 
-    it('should return a name from the response', () => {
-        expect(actual[0].bandName).toEqual('bandName');
+    describe('band 1', () => {
+        it('should return a name from the response', () => {
+            expect(actual[0].bandName).toEqual('bandName');
+        });
+
+        it('should return a primary email from the response', () => {
+            expect(actual[0].primaryEmailAddress).toEqual('email');
+        });
+
+        it('should return a 1st choice date from the response', () => {
+            expect(actual[0].firstChoiceFridayNight).toEqual('1stChoiceDate');
+        });
+
+        it('should return a 2nd choice date from the response', () => {
+            expect(actual[0].secondChoiceFridayNight).toEqual('2ndChoiceDate');
+        });
     });
 
-    it('should return a primary email from the response', () => {
-        expect(actual[0].primaryEmailAddress).toEqual('email');
-    });
+    describe('band 2', () => {
+        it('should return a primary email for band 2', () => {
+            expect(actual[1].bandName).toEqual('bandName2');
+        });
 
-    it('should return a 1st choice date from the response', () => {
-        expect(actual[0].firstChoiceFridayNight).toEqual('1stChoiceDate');
-    });
+        it('should return a primary email for band 2', () => {
+            expect(actual[1].primaryEmailAddress).toEqual('email2');
+        });
 
-    it('should return a 2nd choice date from the response', () => {
-        expect(actual[0].secondChoiceFridayNight).toEqual('2ndChoiceDate');
-    });
+        it('should return an empty string for undefined firstChoiceDate for band 2', () => {
+            expect(actual[1].firstChoiceFridayNight).toEqual('');
+        });
 
-    it('should return a primary email for band 2', () => {
-        expect(actual[1].bandName).toEqual('bandName2');
-    });
-
-    it('should return a primary email for band 2', () => {
-        expect(actual[1].primaryEmailAddress).toEqual('email2');
-    });
-
-    it('should return an empty string for undefined firstChoiceDate for band 2', () => {
-        expect(actual[1].firstChoiceFridayNight).toEqual('');
-    });
-
-    it('should return an empty string for undefined secondChoiceDate for band 2', () => {
-        expect(actual[1].secondChoiceFridayNight).toEqual('');
+        it('should return an empty string for undefined secondChoiceDate for band 2', () => {
+            expect(actual[1].secondChoiceFridayNight).toEqual('');
+        });
     });
 });
