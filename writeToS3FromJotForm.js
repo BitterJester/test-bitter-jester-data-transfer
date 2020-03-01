@@ -61,16 +61,13 @@ jotform.options({
 async function getFormSubmissions() {
     await jotform.getFormSubmissions(BITTER_JESTER_TEST_FORM_ID)
         .then(async function(response) {
-            console.log(response);
             const formattedResponse = formatForS3.format(response);
             const s3PutRequest = s3Client.createPutPublicJsonRequest(
                 s3Bucket,
                 'bitter-jester-test.json',
                 JSON.stringify(formattedResponse)
             );
-            console.log('finished making request');
             await s3Client.put(s3PutRequest);
-            console.log('finished put');
         })
         .fail(function(error) {
             console.log(`Error: ${error}`);
