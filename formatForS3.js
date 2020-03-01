@@ -12,14 +12,16 @@ const format = (s3Response) => {
         return applicationAnswers[questionIdAsString].answer;
     };
 
-    return applicationAnswersBySubmission.map(answersForBand => {
-        return {
-            bandName: getAnswerByQuestionId(answersForBand, BAND_NAME_QUESTION_ID),
-            primaryEmailAddress: getAnswerByQuestionId(answersForBand, PRIMARY_EMAIL_QUESTION_ID),
-            firstChoiceFridayNight: getAnswerByQuestionId(answersForBand, FIRST_CHOICE_FRIDAY_NIGHT_QUESTION_ID) || '',
-            secondChoiceFridayNight: getAnswerByQuestionId(answersForBand, SECOND_CHOICE_FRIDAY_NIGHT_QUESTION_ID) || ''
-        };
-    });
+    return {
+        completedApplications: applicationAnswersBySubmission.map(answersForBand => {
+            return {
+                bandName: getAnswerByQuestionId(answersForBand, BAND_NAME_QUESTION_ID),
+                primaryEmailAddress: getAnswerByQuestionId(answersForBand, PRIMARY_EMAIL_QUESTION_ID),
+                firstChoiceFridayNight: getAnswerByQuestionId(answersForBand, FIRST_CHOICE_FRIDAY_NIGHT_QUESTION_ID) || '',
+                secondChoiceFridayNight: getAnswerByQuestionId(answersForBand, SECOND_CHOICE_FRIDAY_NIGHT_QUESTION_ID) || ''
+            }
+        })
+    };
 }
 
 module.exports = {

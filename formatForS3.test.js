@@ -25,7 +25,7 @@ describe('FormatForS3', () => {
         }
     ];
 
-    const actual = formatForS3.format(s3Response);
+    const actual = formatForS3.format(s3Response).completedApplications;
 
     describe('band 1', () => {
         it('should return a name from the response', () => {
