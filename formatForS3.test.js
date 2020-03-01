@@ -1,7 +1,7 @@
 const formatForS3 = require('./formatForS3');
 
 describe('FormatForS3', () => {
-    const buildAnswers = (bandName, email, firstChoiceDate, secondChoiceDate) => {
+    const buildAnswers = (bandName, email, firstChoiceDate, secondChoiceDate, bandAvailability) => {
         const buildSingleAnswer = (name, answer) => {
             return {
                 name: name,
@@ -12,16 +12,17 @@ describe('FormatForS3', () => {
             "39": buildSingleAnswer("retypeYour", bandName),
             "289": buildSingleAnswer("retypeYour289", email),
             "77": buildSingleAnswer("selectYour77", firstChoiceDate),
-            "78": buildSingleAnswer("selectYour", secondChoiceDate)
+            "78": buildSingleAnswer("selectYour", secondChoiceDate),
+            "232": buildSingleAnswer("bandAvailability", bandAvailability)
         };
     };
 
     const s3Response = [
         {
-            answers: buildAnswers("bandName", "email", "1stChoiceDate", "2ndChoiceDate")
+            answers: buildAnswers("bandName", "email", "1stChoiceDate", "2ndChoiceDate", "We are available for any of the Friday Night Concerts!")
         },
         {
-            answers: buildAnswers("bandName2", "email2", undefined, undefined)
+            answers: buildAnswers("bandName2", "email2", undefined, undefined, "Not available")
         }
     ];
 
@@ -43,6 +44,10 @@ describe('FormatForS3', () => {
         it('should return a 2nd choice date from the response', () => {
             expect(actual[0].secondChoiceFridayNight).toEqual('2ndChoiceDate');
         });
+
+        it('should return true for isBandAvailableOnAllFridays', () => {
+            expect(actual[0].isBandAvailableOnAllFridays).toEqual(true);
+        });
     });
 
     describe('band 2', () => {
@@ -60,6 +65,10 @@ describe('FormatForS3', () => {
 
         it('should return an empty string for undefined secondChoiceDate for band 2', () => {
             expect(actual[1].secondChoiceFridayNight).toEqual('');
+        });
+
+        it('should return false for isBandAvailableOnAllFridays', () => {
+            expect(actual[1].isBandAvailableOnAllFridays).toEqual(false);
         });
     });
 });
