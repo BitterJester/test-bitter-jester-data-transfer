@@ -76,4 +76,4 @@ async function getFormSubmissions() {
 
 module.exports = {
     getFormSubmissions: getFormSubmissions
-}
+};
