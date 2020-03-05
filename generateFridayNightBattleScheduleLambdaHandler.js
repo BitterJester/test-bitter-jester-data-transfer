@@ -1,6 +1,6 @@
 require('dotenv').config();
-const generateFridayNightSchedule = require('./generateFridayNightBattleSchedule/generateFridayNightBattleSchedule');
+const generateFridayNightBattleSchedule = require('./generateFridayNightBattleSchedule/generateFridayNightBattleSchedule');
 
-exports.handler = async function(event) {
-    await generateFridayNightSchedule.generateFridayNightSchedule();
+exports.handler = async function(event, context) {
+    await generateFridayNightBattleSchedule.generateFridayNightBattleSchedule();
 }

@@ -1,6 +1,5 @@
 require('dotenv').config();
 const AWS = require('aws-sdk');
-const fs = require('fs');
 const jotform = require('jotform');
 const formatForS3 = require('writeToS3FromJotForm/formatForS3');
 
