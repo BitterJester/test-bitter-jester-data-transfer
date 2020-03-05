@@ -44,7 +44,7 @@ Resources:
       Code:
         S3Bucket: "bitter-jester-test"
         S3Key: "generate-friday-night-battle-schedule/test-bitter-jester-data-transfer.zip"
-      Handler: "fridayNightBattleScheduleLambdaHandler.handler"
+      Handler: "writeToS3FromJotFormLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
       Timeout: 60

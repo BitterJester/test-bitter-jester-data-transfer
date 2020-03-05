@@ -2,7 +2,7 @@ require('dotenv').config();
 const AWS = require('aws-sdk');
 const fs = require('fs');
 const jotform = require('jotform');
-const formatForS3 = require('formatForS3');
+const formatForS3 = require('writeToS3FromJotForm/formatForS3');
 
 const JOTFORM_API_KEY = process.env.JOTFORM_API_KEY;
 const AWS_ACCESS_ID = process.env.AWS_ACCESS_ID;
