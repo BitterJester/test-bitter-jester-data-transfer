@@ -60,7 +60,7 @@ describe('FormatForS3', () => {
         });
 
         it('should return an empty string for undefined firstChoiceDate for band 2', () => {
-            expect(actual[1].firstChoiceFridayNight).toEqual('');
+            expect(actual[1].firstChoiceFridayNight).toEqual('Available Every Friday');
         });
 
         it('should return an empty string for undefined secondChoiceDate for band 2', () => {

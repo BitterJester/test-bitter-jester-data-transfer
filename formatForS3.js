@@ -22,7 +22,7 @@ const format = (s3Response) => {
             return {
                 bandName: getAnswerByQuestionId(answersForBand, BAND_NAME_QUESTION_ID),
                 primaryEmailAddress: getAnswerByQuestionId(answersForBand, PRIMARY_EMAIL_QUESTION_ID),
-                firstChoiceFridayNight: getAnswerByQuestionId(answersForBand, FIRST_CHOICE_FRIDAY_NIGHT_QUESTION_ID) || '',
+                firstChoiceFridayNight: getAnswerByQuestionId(answersForBand, FIRST_CHOICE_FRIDAY_NIGHT_QUESTION_ID) || 'Available Every Friday',
                 secondChoiceFridayNight: getAnswerByQuestionId(answersForBand, SECOND_CHOICE_FRIDAY_NIGHT_QUESTION_ID) || '',
                 isBandAvailableOnAllFridays: isBandAvailableOnAllFridays(getAnswerByQuestionId(answersForBand, IS_BAND_AVAILABLE_ON_ALL_FRIDAYS_QUESTION_ID))
             }
