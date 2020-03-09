@@ -15,6 +15,7 @@
         "dotenv": "8.2.0",
         "fs": "0.0.1-security",
         "jest": "^25.1.0",
-        "jotform": "0.1.4"
+        "jotform": "0.1.4",
+        "lodash": "^4.17.15"
     }
 }
