@@ -1,26 +1,19 @@
 const generateFridayNightBattleSchedule = require('./generateFridayNightBattleSchedule');
 
 describe('GenerateFridayNightBattleSchedule', () => {
-    const createCompletedApplication = (bandName, firstChoiceFridayNight, secondChoiceFridayNight) => {
+    const createCompletedApplication = (bandName, firstChoiceFridayNight, secondChoiceFridayNight, bandAvailableOnAllFridays) => {
         return {
             bandName: bandName,
             firstChoiceFridayNight: firstChoiceFridayNight,
             secondChoiceFridayNight: secondChoiceFridayNight,
-            isBandAvailableOnAllFridays: false
+            isBandAvailableOnAllFridays: bandAvailableOnAllFridays
         };
     };
 
     const completedApplications = [
-        createCompletedApplication(
-            'band1',
-            '5',
-            '12'
-        ),
-        createCompletedApplication(
-            'band2',
-            '12',
-            '5'
-        )
+        (createCompletedApplication('band1', '5', '12', false)),
+        (createCompletedApplication('band2', '12', '5', false)),
+        (createCompletedApplication('band3', '', '', true))
     ];
 
     it('should give each band their first choice night', () => {

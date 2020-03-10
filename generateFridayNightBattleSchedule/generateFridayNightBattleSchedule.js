@@ -1,36 +1,35 @@
 const _ = require('lodash');
 
 function generateFridayNightBattleSchedule(completedApplications){
-    const fridayNightMap = {
-        nightOne: '5',
-        nightTwo: '12',
-        nightThree: '19',
-        nightFour: '26'
+    const getAvailableBandsForNight = (fridayNightChoice) => {
+        return completedApplications.filter(app => app.firstChoiceFridayNight.includes(fridayNightChoice));
+    }
+
+    const fullyAvailableBands = completedApplications.filter(app => app.isBandAvailableOnAllFridays);
+
+    const firstChoiceNightOne = getAvailableBandsForNight('5');
+    const firstChoiceNightTwo = getAvailableBandsForNight('12');
+    const firstChoiceNightThree = getAvailableBandsForNight('19');
+    const firstChoiceNightFour = getAvailableBandsForNight('26');
+    
+    const schedule = {
+      fridayNightOne: firstChoiceNightOne,
+      fridayNightTwo: firstChoiceNightTwo,
+      fridayNightThree: firstChoiceNightThree,
+      fridayNightFour: firstChoiceNightFour
     };
 
-    const firstChoices = completedApplications.map(app => {
-        let nightIndex;
-
-        Object.values(fridayNightMap).forEach((night, index) => {
-            if(app.firstChoiceFridayNight.includes(night)){
-                nightIndex = index;
+    Object.values(schedule).forEach(nightSchedule => {
+        while(nightSchedule.length < 6){
+            if(fullyAvailableBands.length === 0){
+                break;
+            } else {
+                nightSchedule.push(fullyAvailableBands.pop());
             }
-
-        });
-        return {
-            bandName: app.bandName,
-            firstChoiceFridayNight: Object.keys(fridayNightMap)[nightIndex]
-        };
+        }
     });
 
-    const groupedApplicationsByFirstChoice = _.groupBy(firstChoices, 'firstChoiceFridayNight');
-
-    return {
-        fridayNightOne: groupedApplicationsByFirstChoice.nightOne,
-        fridayNightTwo: groupedApplicationsByFirstChoice.nightTwo,
-        fridayNightThree: groupedApplicationsByFirstChoice.nightThree,
-        fridayNightFour: groupedApplicationsByFirstChoice.nightFour
-    };
+    return schedule;
 }
 
 module.exports = {
