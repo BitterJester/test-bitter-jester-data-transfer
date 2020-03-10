@@ -2,18 +2,20 @@ const _ = require('lodash');
 
 function generateFridayNightBattleSchedule(completedApplications){
     const fridayNightMap = {
-        nightOne: 'Friday, June 5, 2020',
-        nightTwo: 'Friday, June 12, 2020',
-        nightThree: 'Friday, June 17, 2020',
-        nightFour: 'Friday, June 24, 2020'
+        nightOne: '5',
+        nightTwo: '12',
+        nightThree: '19',
+        nightFour: '26'
     };
-    console.log(JSON.stringify(completedApplications));
+
     const firstChoices = completedApplications.map(app => {
         let nightIndex;
-        Object.values(fridayNightMap).map((night, index) => {
-            if(night === app.firstChoiceFridayNight){
+
+        Object.values(fridayNightMap).forEach((night, index) => {
+            if(app.firstChoiceFridayNight.includes(night)){
                 nightIndex = index;
             }
+
         });
         return {
             bandName: app.bandName,

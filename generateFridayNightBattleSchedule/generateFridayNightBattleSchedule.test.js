@@ -13,13 +13,13 @@ describe('GenerateFridayNightBattleSchedule', () => {
     const completedApplications = [
         createCompletedApplication(
             'band1',
-            'Friday, June 5, 2020',
-            'Friday, June 12, 2020'
+            '5',
+            '12'
         ),
         createCompletedApplication(
             'band2',
-            'Friday, June 12, 2020',
-            'Friday, June 5, 2020'
+            '12',
+            '5'
         )
     ];
 
