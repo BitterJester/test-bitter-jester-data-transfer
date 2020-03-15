@@ -37,13 +37,51 @@ Resources:
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
       Timeout: 60
+  BandApplicationsUpdatedSnsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: BandApplicationUpdatedSnsTopic
+      Subscription:
+        - Endpoint: !GetAtt GenerateFridayNightBattleSchedule.Arn
+          Protocol: "lambda"
+  SNSAccessPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action:
+              - "sns:Publish"
+              - "SNS:GetTopicAttributes"
+              - "SNS:SetTopicAttributes"
+              - "SNS:AddPermission"
+              - "SNS:RemovePermission"
+              - "SNS:DeleteTopic"
+              - "SNS:Subscribe"
+              - "SNS:ListSubscriptionsByTopic"
+              - "SNS:Publish"
+              - "SNS:Receive"
+            Principal:
+              AWS: "*"
+            Resource:
+              Ref: BandApplicationsUpdatedSnsTopic
+      Topics:
+        - Ref: BandApplicationsUpdatedSnsTopic
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: "lambda:InvokeFunction"
+      Principal: "sns.amazonaws.com"
+      SourceArn:
+        Ref: BandApplicationsUpdatedSnsTopic
+      FunctionName: !GetAtt GenerateFridayNightBattleSchedule.Arn
   GenerateFridayNightBattleSchedule:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: GenerateFridayNightBattleSchedule
       Code:
         S3Bucket: "bitter-jester-test"
-        S3Key: "generate-friday-night-battle-schedule/test-bitter-jester-data-transfer.zip"
+        S3Key: "write-to-s3-from-jotform/test-bitter-jester-data-transfer.zip"
       Handler: "generateFridayNightBattleScheduleLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
