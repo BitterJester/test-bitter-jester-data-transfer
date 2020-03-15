@@ -32,7 +32,7 @@ Resources:
       FunctionName: WriteToS3FromJotForm
       Code:
           S3Bucket: "bitter-jester-test"
-          S3Key: "write-to-s3-from-jotform/test-bitter-jester-data-transfer.zip"
+          S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
       Handler: "writeToS3FromJotFormLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
@@ -81,7 +81,7 @@ Resources:
       FunctionName: GenerateFridayNightBattleSchedule
       Code:
         S3Bucket: "bitter-jester-test"
-        S3Key: "write-to-s3-from-jotform/test-bitter-jester-data-transfer.zip"
+        S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
       Handler: "generateFridayNightBattleScheduleLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
