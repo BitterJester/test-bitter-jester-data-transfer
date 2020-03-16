@@ -67,7 +67,30 @@ Resources:
               Ref: BandApplicationsUpdatedSnsTopic
       Topics:
         - Ref: BandApplicationsUpdatedSnsTopic
-  LambdaInvokePermission:
+  CheckJotFormForUpdatesPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action:
+              - "sns:Publish"
+              - "SNS:GetTopicAttributes"
+              - "SNS:SetTopicAttributes"
+              - "SNS:AddPermission"
+              - "SNS:RemovePermission"
+              - "SNS:DeleteTopic"
+              - "SNS:Subscribe"
+              - "SNS:ListSubscriptionsByTopic"
+              - "SNS:Publish"
+              - "SNS:Receive"
+            Principal:
+              AWS: "*"
+            Resource:
+              Ref: CheckJotFormForUpdatesSnsTopic
+      Topics:
+        - Ref: CheckJotFormForUpdatesSnsTopic
+  GenerateFridayNightBattleScheduleLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
       Action: "lambda:InvokeFunction"
@@ -75,6 +98,21 @@ Resources:
       SourceArn:
         Ref: BandApplicationsUpdatedSnsTopic
       FunctionName: !GetAtt GenerateFridayNightBattleSchedule.Arn
+  CheckJotFormForUpdatesSnsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: CheckJotFormForUpdatesSnsTopic
+      Subscription:
+        - Endpoint: !GetAtt WriteToS3FromJotForm.Arn
+          Protocol: "lambda"
+  CheckJotFormForUpdatesLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: "lambda:InvokeFunction"
+      Principal: "sns.amazonaws.com"
+      SourceArn:
+        Ref: CheckJotFormForUpdatesSnsTopic
+      FunctionName: !GetAtt WriteToS3FromJotForm.Arn
   GenerateFridayNightBattleSchedule:
     Type: AWS::Lambda::Function
     Properties:
