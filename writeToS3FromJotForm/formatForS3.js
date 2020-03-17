@@ -15,7 +15,7 @@ const format = (s3Response) => {
 
     const isBandAvailableOnAllFridays = (isBandAvailableStringField) => {
         return !isBandAvailableStringField.toLowerCase().includes('not available');
-    }
+    };
 
     return {
         completedApplications: applicationAnswersBySubmission.map(answersForBand => {

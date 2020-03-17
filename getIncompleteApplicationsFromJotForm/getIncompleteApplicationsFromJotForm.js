@@ -6,6 +6,8 @@ const S3Client = require('../s3Client').S3Client;
 const JOTFORM_API_KEY = process.env.JOTFORM_API_KEY;
 const AWS_ACCESS_ID = process.env.AWS_ACCESS_ID;
 const AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
+
+const BITTER_JESTER_INCOMPLETE_APPLICATIONS_FORM_ID = 193466524377165;
 const s3Bucket = 'bitter-jester-test';
 
 const s3Client = new S3Client(AWS_ACCESS_ID, AWS_SECRET_KEY);
@@ -16,8 +18,8 @@ jotform.options({
     timeout: 10000
 });
 
-async function getFormSubmissions(formId) {
-    await jotform.getFormSubmissions(formId)
+async function getFormSubmissions() {
+    await jotform.getFormSubmissions(BITTER_JESTER_INCOMPLETE_APPLICATIONS_FORM_ID)
         .then(async function(response) {
             const formattedResponse = formatForS3.format(response);
             const s3PutRequest = s3Client.createPutPublicJsonRequest(
