@@ -16,8 +16,11 @@ jotform.options({
 });
 
 async function getFormSubmissions(formId, filename, formatFunction) {
-    await jotform.getFormSubmissions(formId)
-        .then(async function(response) {
+    const queryParams = {
+        limit: 1000
+    }
+    await jotform.getFormSubmissions(formId, queryParams)
+        .then(async function (response) {
             const formattedResponse = formatFunction(response);
             const s3PutRequest = s3Client.createPutPublicJsonRequest(
                 s3Bucket,
@@ -26,7 +29,7 @@ async function getFormSubmissions(formId, filename, formatFunction) {
             );
             await s3Client.put(s3PutRequest);
         })
-        .fail(function(error) {
+        .fail(function (error) {
             console.log(`Error: ${error}`);
         });
 }
