@@ -41,26 +41,26 @@ describe('extractAnswersFromJotform', () => {
     const actual = extractAnswersFromJotform(applications, answerQuestionIdMap);
 
     it('should have field1 as answer1', () => {
-        expect(actual.completedApplications[0].field1).toEqual('answer1');
+        expect(actual[0].field1).toEqual('answer1');
     });
 
     it('should have field2 as answer2', () => {
-        expect(actual.completedApplications[0].field2).toEqual('answer2');
+        expect(actual[0].field2).toEqual('answer2');
     });
 
     it('should have field3 as answer3 for app2', () => {
-        expect(actual.completedApplications[0].field3).toEqual('');
+        expect(actual[0].field3).toEqual('');
     });
 
     it('should have field1 as answer1 for app2', () => {
-        expect(actual.completedApplications[1].field1).toEqual('answer1');
+        expect(actual[1].field1).toEqual('answer1');
     });
 
     it('should have field2 as answer2 for app2', () => {
-        expect(actual.completedApplications[1].field2).toEqual('answer2');
+        expect(actual[1].field2).toEqual('answer2');
     });
 
     it('should have field3 as answer3 for app2', () => {
-        expect(actual.completedApplications[1].field3).toEqual('answer3');
+        expect(actual[1].field3).toEqual('answer3');
     });
 });

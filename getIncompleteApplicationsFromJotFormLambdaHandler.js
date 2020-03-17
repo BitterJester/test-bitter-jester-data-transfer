@@ -1,18 +1,21 @@
 require('dotenv').config();
-const S3Client = require('s3Client').S3Client;
+const writeToS3FromJotForm = require('./writeToS3FromJotForm/writeToS3FromJotForm');
+const SNSClient = require('./snsClient').SNSClient;
+const formatIncompleteApplications = require('./getIncompleteApplicationsFromJotForm/formatIncompleteApplications');
 
-const AWS_ACCESS_ID = process.env.AWS_ACCESS_ID;
-const AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
-const s3Client = new S3Client(AWS_ACCESS_ID, AWS_SECRET_KEY);
-const s3Bucket = 'bitter-jester-test';
+const BITTER_JESTER_COMPLETED_APPLICATIONS_JOTFORM_FORM_ID = 193466524377165;
+const APPLICATIONS_UPDATED_SNS_TOPIC_ARN = 'arn:aws:sns:us-east-1:771384749710:BandApplicationUpdatedSnsTopic';
+const OUTPUT_FILE_NAME = 'bitter-jester-test.json';
 
-exports.handler = async function (event, context) {
-    const item = await s3Client.getObject();
-
-    const s3PutRequest = s3Client.createPutPublicJsonRequest(
-        s3Bucket,
-        'incomplete-applications.json',
-        JSON.stringify(null)
+exports.handler = async function (event) {
+    await writeToS3FromJotForm.getFormSubmissions(
+        BITTER_JESTER_COMPLETED_APPLICATIONS_JOTFORM_FORM_ID,
+        OUTPUT_FILE_NAME,
+        formatIncompleteApplications.format
     );
-    await s3Client.put(s3PutRequest);
-}
+
+    await new SNSClient().publishSNSMessage({
+        Message: 'Incomplete Applications Updated',
+        TopicArn: APPLICATIONS_UPDATED_SNS_TOPIC_ARN
+    });
+};

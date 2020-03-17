@@ -7,8 +7,7 @@ const extractAnswersFromJotform = (applications, answerQuestionIdMap) => {
         return applicationAnswers[questionIdAsString] ? applicationAnswers[questionIdAsString].answer : '';
     };
 
-    return {
-        completedApplications: applicationAnswersBySubmission.map(answersForBand => {
+    return applicationAnswersBySubmission.map(answersForBand => {
             let parsedApplication = {};
 
             Object.keys(answerQuestionIdMap).map(field => {
@@ -16,8 +15,7 @@ const extractAnswersFromJotform = (applications, answerQuestionIdMap) => {
             });
 
             return parsedApplication;
-        })
-    };
+        });
 }
 
 module.exports = {

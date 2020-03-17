@@ -15,7 +15,7 @@ const format = (applications) => {
     };
 
     const extractedApplications = extractAnswersFromJotform.extractAnswersFromJotform(applications, jotformAnswerMap);
-    const cleanedApplications = extractedApplications.completedApplications.map(app => {
+    const cleanedApplications = extractedApplications.map(app => {
         const bandAvailableOnAllFridays = app.isBandAvailableOnAllFridays;
         const firstChoiceFridayNight = app.firstChoiceFridayNight;
         const secondChoiceFridayNight = app.secondChoiceFridayNight;
