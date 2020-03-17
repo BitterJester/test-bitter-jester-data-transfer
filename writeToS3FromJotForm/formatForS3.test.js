@@ -17,7 +17,7 @@ describe('FormatForS3', () => {
         };
     };
 
-    const s3Response = [
+    const jotformResponse = [
         {
             answers: buildAnswers("bandName", "email", "1stChoiceDate", "2ndChoiceDate", "We are available for any of the Friday Night Concerts!")
         },
@@ -26,7 +26,7 @@ describe('FormatForS3', () => {
         }
     ];
 
-    const actual = formatForS3.format(s3Response).completedApplications;
+    const actual = formatForS3.format(jotformResponse).completedApplications;
 
     describe('band 1', () => {
         it('should return a name from the response', () => {

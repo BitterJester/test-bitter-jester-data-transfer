@@ -1,34 +1,43 @@
-const BAND_NAME_QUESTION_ID = '39';
-const PRIMARY_EMAIL_QUESTION_ID = '289';
-const FIRST_CHOICE_FRIDAY_NIGHT_QUESTION_ID = '77';
-const SECOND_CHOICE_FRIDAY_NIGHT_QUESTION_ID = '78';
-const IS_BAND_AVAILABLE_ON_ALL_FRIDAYS_QUESTION_ID = '232';
+const extractAnswersFromJotform = require('./extractAnswersFromJotforrm');
 
-const format = (s3Response) => {
-    const applicationAnswersBySubmission = s3Response.map(application => {
-        return application.answers;
-    });
+const jotformAnswerMap = {
+    bandName: '39',
+    primaryEmailAddress: '289',
+    firstChoiceFridayNight: '77',
+    secondChoiceFridayNight: '78',
+    isBandAvailableOnAllFridays: '232'
+};
 
-    const getAnswerByQuestionId = (applicationAnswers, questionIdAsString) => {
-        return applicationAnswers[questionIdAsString].answer;
-    };
+const format = (applications) => {
 
-    const isBandAvailableOnAllFridays = (isBandAvailableStringField) => {
+    const convertIsBandAvailableOnFridays = (isBandAvailableStringField) => {
         return !isBandAvailableStringField.toLowerCase().includes('not available');
     };
 
+    const extractedApplications = extractAnswersFromJotform.extractAnswersFromJotform(applications, jotformAnswerMap);
+    const cleanedApplications = extractedApplications.completedApplications.map(app => {
+        const bandAvailableOnAllFridays = app.isBandAvailableOnAllFridays;
+        const firstChoiceFridayNight = app.firstChoiceFridayNight;
+        const secondChoiceFridayNight = app.secondChoiceFridayNight;
+
+        if(bandAvailableOnAllFridays){
+            app.isBandAvailableOnAllFridays = convertIsBandAvailableOnFridays(bandAvailableOnAllFridays);
+        }
+
+        if(!firstChoiceFridayNight){
+            app.firstChoiceFridayNight = 'Available Every Friday'
+        }
+
+        if(!secondChoiceFridayNight){
+            app.secondChoiceFridayNight = ''
+        }
+        return app;
+    });
+
     return {
-        completedApplications: applicationAnswersBySubmission.map(answersForBand => {
-            return {
-                bandName: getAnswerByQuestionId(answersForBand, BAND_NAME_QUESTION_ID),
-                primaryEmailAddress: getAnswerByQuestionId(answersForBand, PRIMARY_EMAIL_QUESTION_ID),
-                firstChoiceFridayNight: getAnswerByQuestionId(answersForBand, FIRST_CHOICE_FRIDAY_NIGHT_QUESTION_ID) || 'Available Every Friday',
-                secondChoiceFridayNight: getAnswerByQuestionId(answersForBand, SECOND_CHOICE_FRIDAY_NIGHT_QUESTION_ID) || '',
-                isBandAvailableOnAllFridays: isBandAvailableOnAllFridays(getAnswerByQuestionId(answersForBand, IS_BAND_AVAILABLE_ON_ALL_FRIDAYS_QUESTION_ID))
-            }
-        })
+        completedApplications: cleanedApplications
     };
-}
+};
 
 module.exports = {
     format: format
