@@ -5,7 +5,7 @@ const formatIncompleteApplications = require('./getIncompleteApplicationsFromJot
 
 const BITTER_JESTER_COMPLETED_APPLICATIONS_JOTFORM_FORM_ID = 193466524377165;
 const APPLICATIONS_UPDATED_SNS_TOPIC_ARN = 'arn:aws:sns:us-east-1:771384749710:BandApplicationUpdatedSnsTopic';
-const OUTPUT_FILE_NAME = 'bitter-jester-test.json';
+const OUTPUT_FILE_NAME = 'incomplete-applications.json';
 
 exports.handler = async function (event) {
     await writeToS3FromJotForm.getFormSubmissions(
@@ -13,9 +13,4 @@ exports.handler = async function (event) {
         OUTPUT_FILE_NAME,
         formatIncompleteApplications.format
     );
-
-    await new SNSClient().publishSNSMessage({
-        Message: 'Incomplete Applications Updated',
-        TopicArn: APPLICATIONS_UPDATED_SNS_TOPIC_ARN
-    });
 };
