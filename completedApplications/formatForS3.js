@@ -1,4 +1,4 @@
-const extractAnswersFromJotform = require('./extractAnswersFromJotforrm');
+const extractAnswersFromJotform = require('../writeToS3FromJotForm/extractAnswersFromJotforrm');
 
 const jotformAnswerMap = {
     bandName: '39',
