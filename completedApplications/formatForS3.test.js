@@ -13,7 +13,10 @@ describe('FormatForS3', () => {
             "289": buildSingleAnswer("retypeYour289", email),
             "77": buildSingleAnswer("selectYour77", firstChoiceDate),
             "78": buildSingleAnswer("selectYour", secondChoiceDate),
-            "232": buildSingleAnswer("bandAvailability", bandAvailability)
+            "232": buildSingleAnswer("bandAvailability", bandAvailability),
+            "312": buildSingleAnswer("phoneNUmber", {
+                full: 'phone'
+            })
         };
     };
 
@@ -47,6 +50,10 @@ describe('FormatForS3', () => {
 
         it('should return true for isBandAvailableOnAllFridays', () => {
             expect(actual[0].isBandAvailableOnAllFridays).toEqual(true);
+        });
+
+        it('should return phone number', () => {
+            expect(actual[0].primaryPhoneNumber).toEqual('phone');
         });
     });
 

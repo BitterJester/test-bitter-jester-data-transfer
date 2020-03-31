@@ -5,7 +5,8 @@ const jotformAnswerMap = {
     primaryEmailAddress: '289',
     firstChoiceFridayNight: '77',
     secondChoiceFridayNight: '78',
-    isBandAvailableOnAllFridays: '232'
+    isBandAvailableOnAllFridays: '232',
+    primaryPhoneNumber: '312'
 };
 
 const format = (applications) => {
@@ -19,6 +20,7 @@ const format = (applications) => {
         const bandAvailableOnAllFridays = app.isBandAvailableOnAllFridays;
         const firstChoiceFridayNight = app.firstChoiceFridayNight;
         const secondChoiceFridayNight = app.secondChoiceFridayNight;
+        app.primaryPhoneNumber = app.primaryPhoneNumber.full;
 
         if(bandAvailableOnAllFridays){
             app.isBandAvailableOnAllFridays = convertIsBandAvailableOnFridays(bandAvailableOnAllFridays);
