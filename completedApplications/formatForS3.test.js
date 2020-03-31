@@ -16,7 +16,8 @@ describe('FormatForS3', () => {
             "232": buildSingleAnswer("bandAvailability", bandAvailability),
             "312": buildSingleAnswer("phoneNUmber", {
                 full: 'phone'
-            })
+            }),
+            "315": buildSingleAnswer("", 'citiesRepresented')
         };
     };
 
@@ -54,6 +55,10 @@ describe('FormatForS3', () => {
 
         it('should return phone number', () => {
             expect(actual[0].primaryPhoneNumber).toEqual('phone');
+        });
+
+        it('should return a citiesRepresented string', function () {
+            expect(actual[0].citiesRepresented).toEqual('citiesRepresented');
         });
     });
 
