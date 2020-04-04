@@ -7,7 +7,8 @@ const jotformAnswerMap = {
     secondChoiceFridayNight: '78',
     isBandAvailableOnAllFridays: '232',
     primaryPhoneNumber: '312',
-    citiesRepresented: '315'
+    citiesRepresented: '315',
+    unavailableFridayNights: '80'
 };
 
 const format = (applications) => {

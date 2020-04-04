@@ -17,7 +17,8 @@ describe('FormatForS3', () => {
             "312": buildSingleAnswer("phoneNUmber", {
                 full: 'phone'
             }),
-            "315": buildSingleAnswer("", 'citiesRepresented')
+            "315": buildSingleAnswer("", 'citiesRepresented'),
+            "80": buildSingleAnswer("", ['1','2'])
         };
     };
 
@@ -59,6 +60,10 @@ describe('FormatForS3', () => {
 
         it('should return a citiesRepresented string', function () {
             expect(actual[0].citiesRepresented).toEqual('citiesRepresented');
+        });
+
+        it('should return a unavailableFridayNights array', function () {
+            expect(actual[0].unavailableFridayNights).toEqual(['1','2']);
         });
     });
 
