@@ -46,7 +46,8 @@ function generateFridayNightBattleSchedule(completedApplications) {
                 bands: firstChoiceNightFour,
                 night: 4
             }
-        ]
+        ],
+        version: 'suggested'
     };
 
     function getSortedScheduleByLowestNumberOfBands() {

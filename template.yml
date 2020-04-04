@@ -135,3 +135,41 @@ Resources:
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
       Timeout: 60
+  IncompleteApplicationsFromJotFormSnsTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action:
+              - "sns:Publish"
+              - "SNS:GetTopicAttributes"
+              - "SNS:SetTopicAttributes"
+              - "SNS:AddPermission"
+              - "SNS:RemovePermission"
+              - "SNS:DeleteTopic"
+              - "SNS:Subscribe"
+              - "SNS:ListSubscriptionsByTopic"
+              - "SNS:Publish"
+              - "SNS:Receive"
+            Principal:
+              AWS: "*"
+            Resource:
+              Ref: IncompleteApplicationsFromJotFormSnsTopic
+      Topics:
+        - Ref: IncompleteApplicationsFromJotFormSnsTopic
+  IncompleteApplicationsFromJotFormLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: "lambda:InvokeFunction"
+      Principal: "sns.amazonaws.com"
+      SourceArn:
+        Ref: IncompleteApplicationsFromJotFormSnsTopic
+      FunctionName: !GetAtt GetIncompleteApplicationsFromJotForm.Arn
+  IncompleteApplicationsFromJotFormSnsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: IncompleteApplicationsFromJotFormSnsTopic
+      Subscription:
+        - Endpoint: !GetAtt GetIncompleteApplicationsFromJotForm.Arn
+          Protocol: "lambda"
