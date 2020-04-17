@@ -8,7 +8,8 @@ const jotformAnswerMap = {
     isBandAvailableOnAllFridays: '232',
     primaryPhoneNumber: '312',
     citiesRepresented: '315',
-    unavailableFridayNights: '80'
+    unavailableFridayNights: '80',
+    referencedBands: '303'
 };
 
 const format = (applications) => {
