@@ -16,4 +16,4 @@ exports.handler = async function (event, context) {
         JSON.stringify(schedule)
     );
     await s3Client.put(s3PutRequest);
-}
+};
