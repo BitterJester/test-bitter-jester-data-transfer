@@ -9,7 +9,12 @@ const jotformAnswerMap = {
 };
 
 const format = (applications) => {
-    const extractedApplications = extractAnswersFromJotform.extractAnswersFromJotform(applications, jotformAnswerMap);
+    const extractedApplications = extractAnswersFromJotform.extractAnswersFromJotform(applications, jotformAnswerMap)
+        .map(item => {
+            item.songUrl = encodeURI(item.songUrl[0]);
+            item.bandPhotoUrl = encodeURI(item.bandPhotoUrl[0]);
+            return item;
+        });
 
     return {
         originalSongs: extractedApplications
