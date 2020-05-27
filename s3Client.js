@@ -1,10 +1,10 @@
 const AWS = require('aws-sdk');
 
 class S3Client {
-    constructor(
-        accessKeyId,
-        secretAccessKey
-    ) {
+    constructor() {
+        const accessKeyId = process.env.AWS_ACCESS_ID;
+        const secretAccessKey = process.env.AWS_SECRET_KEY;
+
         this.client = new AWS.S3({
             accessKeyId,
             secretAccessKey
