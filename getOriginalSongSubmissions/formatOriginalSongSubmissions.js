@@ -5,7 +5,9 @@ const jotformAnswerMap = {
     bandName: '39',
     primaryEmailAddress: '289',
     songUrl: '252',
-    bandPhotoUrl: '253'
+    bandPhotoUrl: '253',
+    lyricsUrl: '540',
+    songDescription: '539'
 };
 
 const format = (applications) => {
@@ -13,6 +15,8 @@ const format = (applications) => {
         .map(item => {
             item.songUrl = encodeURI(item.songUrl[0]);
             item.bandPhotoUrl = encodeURI(item.bandPhotoUrl[0]);
+            item.lyricsUrl = encodeURI(item.lyricsUrl[0]);
+            item.songDescription = item.songDescription ? item.songDescription.replace(/&#039;/g, "'") : '';
             return item;
         });
 
