@@ -23,10 +23,10 @@ class S3Client {
         })
     }
 
-    async getObject() {
+    async getObject(bucket = "bitter-jester-test", key = "bitter-jester-test.json") {
         const params = {
-            Bucket: "bitter-jester-test",
-            Key: "bitter-jester-test.json"
+            Bucket: bucket,
+            Key: key
         };
         return new Promise((resolve, reject) => {
             this.client.getObject(params, function (err, data) {
