@@ -1,4 +1,5 @@
 const extractAnswersFromJotform = require('../writeToS3FromJotForm/extractAnswersFromJotforrm');
+const S3Client = require('s3Client').S3Client;
 
 const jotformAnswerMap = {
     songName: '543',
@@ -10,7 +11,7 @@ const jotformAnswerMap = {
     songDescription: '539'
 };
 
-const format = (applications) => {
+const format = async (applications) => {
     const extractedApplications = extractAnswersFromJotform.extractAnswersFromJotform(applications, jotformAnswerMap)
         .map(item => {
             item.songUrl = encodeURI(item.songUrl[0]);
@@ -20,6 +21,15 @@ const format = (applications) => {
             return item;
         });
 
+    const originalSongSubmissions = await new S3Client().getObject('bitter-jester-test', 'original-song-submissions.json');
+    extractedApplications.forEach(song => {
+        const numberOfSongsForBand = originalSongSubmissions.originalSongs.filter(app => app.bandName === song.bandName).length;
+
+        if(numberOfSongsForBand === 0){
+            song.scheduledWeek = 1;
+            originalSongSubmissions.originalSongs.push(song);
+        }
+    });
     return {
         originalSongs: extractedApplications
     };

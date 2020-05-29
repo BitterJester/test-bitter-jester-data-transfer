@@ -19,7 +19,7 @@ async function getFormSubmissions(formId, filename, formatFunction) {
     }
     await jotform.getFormSubmissions(formId, queryParams)
         .then(async function (response) {
-            const formattedResponse = formatFunction(response);
+            const formattedResponse = await formatFunction(response);
             const s3PutRequest = s3Client.createPutPublicJsonRequest(
                 s3Bucket,
                 filename,
