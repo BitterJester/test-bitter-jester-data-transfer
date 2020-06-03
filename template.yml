@@ -195,3 +195,52 @@ Resources:
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
       Timeout: 60
+  CalculateScoresForEachOriginalSongInWeek:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: CalculateScoresForEachOriginalSongInWeek
+      Code:
+        S3Bucket: "bitter-jester-test"
+        S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
+      Handler: "calculateScoresForEachOriginalSongInWeekLambdaHandler.handler"
+      Runtime: "nodejs12.x"
+      Role: !GetAtt LambdaBasicAccessRole.Arn
+      Timeout: 60
+  CalculateScoresForEachOriginalSongInWeekSnsTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action:
+              - "sns:Publish"
+              - "SNS:GetTopicAttributes"
+              - "SNS:SetTopicAttributes"
+              - "SNS:AddPermission"
+              - "SNS:RemovePermission"
+              - "SNS:DeleteTopic"
+              - "SNS:Subscribe"
+              - "SNS:ListSubscriptionsByTopic"
+              - "SNS:Publish"
+              - "SNS:Receive"
+            Principal:
+              AWS: "*"
+            Resource:
+              Ref: CalculateScoresForEachOriginalSongInWeekSnsTopic
+      Topics:
+        - Ref: CalculateScoresForEachOriginalSongInWeekSnsTopic
+  CalculateScoresForEachOriginalSongInWeekLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: "lambda:InvokeFunction"
+      Principal: "sns.amazonaws.com"
+      SourceArn:
+        Ref: CalculateScoresForEachOriginalSongInWeekSnsTopic
+      FunctionName: !GetAtt CalculateScoresForEachOriginalSongInWeek.Arn
+  CalculateScoresForEachOriginalSongInWeekSnsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: CalculateScoresForEachOriginalSongInWeekSnsTopic
+      Subscription:
+        - Endpoint: !GetAtt CalculateScoresForEachOriginalSongInWeek.Arn
+          Protocol: "lambda"

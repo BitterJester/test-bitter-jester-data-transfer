@@ -54,6 +54,32 @@ class S3Client {
             CacheControl: 'max-age=60'
         };
     }
+
+    async getObjectsInFolder(bucket, prefix) {
+        const params = {
+            Bucket: bucket,
+            Prefix: prefix
+        };
+
+        return new Promise((resolve, reject) => {
+            this.client.listObjectsV2(params, async (err, data) => {
+                if (err) console.log(err, err.stack);
+                else {
+                    const s3Objects = [];
+                    for(let i = 0; i <= data.Contents.length - 1; i++){
+                        const item = data.Contents[i];
+                        if (item.Key.includes('.json')) {
+                            const s3Object = await this.getObject(bucket, item.Key);
+                            s3Objects.push(s3Object);
+                        }
+
+                    }
+                    return resolve(s3Objects);
+                }
+            })
+        })
+    }
+
 }
 
 module.exports = {
