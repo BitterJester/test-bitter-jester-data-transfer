@@ -244,14 +244,52 @@ Resources:
       Subscription:
         - Endpoint: !GetAtt CalculateScoresForEachOriginalSongInWeek.Arn
           Protocol: "lambda"
-  GetJudgesComments:
+  AggregateCommentsForWeek:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: GetOriginalSongSubmissions
+      FunctionName: AggregateCommentsForWeek
       Code:
         S3Bucket: "bitter-jester-test"
         S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
-      Handler: "getOriginalSongSubmissionsLambdaHandler.handler"
+      Handler: "aggregateCommentsForWeekLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
       Timeout: 60
+  AggregateCommentsForWeekSnsTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action:
+              - "sns:Publish"
+              - "SNS:GetTopicAttributes"
+              - "SNS:SetTopicAttributes"
+              - "SNS:AddPermission"
+              - "SNS:RemovePermission"
+              - "SNS:DeleteTopic"
+              - "SNS:Subscribe"
+              - "SNS:ListSubscriptionsByTopic"
+              - "SNS:Publish"
+              - "SNS:Receive"
+            Principal:
+              AWS: "*"
+            Resource:
+              Ref: AggregateCommentsForWeekSnsTopic
+      Topics:
+        - Ref: AggregateCommentsForWeekSnsTopic
+    AggregateCommentsForWeekLambdaInvokePermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        Action: "lambda:InvokeFunction"
+        Principal: "sns.amazonaws.com"
+        SourceArn:
+          Ref: AggregateCommentsForWeekSnsTopic
+        FunctionName: !GetAtt AggregateCommentsForWeek.Arn
+    AggregateCommentsForWeekSnsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: AggregateCommentsForWeekSnsTopic
+        Subscription:
+          - Endpoint: !GetAtt AggregateCommentsForWeek.Arn
+            Protocol: "lambda"
