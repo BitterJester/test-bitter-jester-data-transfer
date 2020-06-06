@@ -244,3 +244,14 @@ Resources:
       Subscription:
         - Endpoint: !GetAtt CalculateScoresForEachOriginalSongInWeek.Arn
           Protocol: "lambda"
+  GetJudgesComments:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: GetOriginalSongSubmissions
+      Code:
+        S3Bucket: "bitter-jester-test"
+        S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
+      Handler: "getOriginalSongSubmissionsLambdaHandler.handler"
+      Runtime: "nodejs12.x"
+      Role: !GetAtt LambdaBasicAccessRole.Arn
+      Timeout: 60

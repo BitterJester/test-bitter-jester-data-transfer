@@ -6,8 +6,10 @@ exports.handler = async function (event) {
 
     const overallSongRankings = await s3Client.getObjectsInFolder('bitter-jester-test', 'overall-song-rankings/');
 
+    const finalSongRankings = overallSongRankings.filter(ranking => ranking.isFinalRanking);
+
     const scoreForEachBand = [];
-    overallSongRankings.forEach(judge => {
+    finalSongRankings.forEach(judge => {
         judge.rankings.forEach(songRankingFromJudge => {
             const songName = songRankingFromJudge.songName;
             const bandName = songRankingFromJudge.bandName;
@@ -28,7 +30,7 @@ exports.handler = async function (event) {
     await s3Client.put(s3Client.createPutPublicJsonRequest(
         'bitter-jester-test',
         'song-ranking-totals.json',
-        JSON.stringify({totalScores: scoreForEachBand})
+        JSON.stringify({totalScores: scoreForEachBand, totalFinalRankings: finalSongRankings.length, allSongsAreSubmitted: finalSongRankings.length === overallSongRankings.length})
     ));
     console.log('Done.');
 };
