@@ -278,18 +278,18 @@ Resources:
               Ref: AggregateCommentsForWeekSnsTopic
       Topics:
         - Ref: AggregateCommentsForWeekSnsTopic
-    AggregateCommentsForWeekLambdaInvokePermission:
-      Type: AWS::Lambda::Permission
-      Properties:
-        Action: "lambda:InvokeFunction"
-        Principal: "sns.amazonaws.com"
-        SourceArn:
-          Ref: AggregateCommentsForWeekSnsTopic
-        FunctionName: !GetAtt AggregateCommentsForWeek.Arn
-    AggregateCommentsForWeekSnsTopic:
-      Type: AWS::SNS::Topic
-      Properties:
-        TopicName: AggregateCommentsForWeekSnsTopic
-        Subscription:
-          - Endpoint: !GetAtt AggregateCommentsForWeek.Arn
-            Protocol: "lambda"
+  AggregateCommentsForWeekLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: "lambda:InvokeFunction"
+      Principal: "sns.amazonaws.com"
+      SourceArn:
+        Ref: AggregateCommentsForWeekSnsTopic
+      FunctionName: !GetAtt AggregateCommentsForWeek.Arn
+  AggregateCommentsForWeekSnsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: AggregateCommentsForWeekSnsTopic
+      Subscription:
+        - Endpoint: !GetAtt AggregateCommentsForWeek.Arn
+          Protocol: "lambda"

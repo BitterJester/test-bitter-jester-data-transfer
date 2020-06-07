@@ -20,17 +20,24 @@ exports.handler = async function (event) {
                 const indexOfPointsToUpdate = scoreForEachBand.findIndex(score => {
                     return score.songName === songName;
                 });
-                scoreForEachBand[indexOfPointsToUpdate] = {totalPoints, songName, bandName};
+                const scoreForBand = scoreForEachBand[indexOfPointsToUpdate];
+                scoreForBand.places.push(songRankingFromJudge.placement);
+                scoreForEachBand[indexOfPointsToUpdate] = {...scoreForBand, totalPoints, songName, bandName};
             } else {
-                scoreForEachBand.push({totalPoints: songRankingFromJudge.value, songName, bandName})
+                scoreForEachBand.push({
+                    totalPoints: songRankingFromJudge.value,
+                    songName,
+                    bandName,
+                    places: [songRankingFromJudge.placement]
+                })
             }
         })
     });
-
-    await s3Client.put(s3Client.createPutPublicJsonRequest(
-        'bitter-jester-test',
-        'song-ranking-totals.json',
-        JSON.stringify({totalScores: scoreForEachBand, totalFinalRankings: finalSongRankings.length, allSongsAreSubmitted: finalSongRankings.length === overallSongRankings.length})
-    ));
+    console.log(scoreForEachBand);
+    // await s3Client.put(s3Client.createPutPublicJsonRequest(
+    //     'bitter-jester-test',
+    //     'song-ranking-totals.json',
+    //     JSON.stringify({totalScores: scoreForEachBand, totalFinalRankings: finalSongRankings.length, allSongsAreSubmitted: finalSongRankings.length === overallSongRankings.length})
+    // ));
     console.log('Done.');
 };
