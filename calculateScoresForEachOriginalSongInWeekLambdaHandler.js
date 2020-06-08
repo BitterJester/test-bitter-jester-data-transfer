@@ -2,9 +2,12 @@ const S3Client = require('s3Client').S3Client;
 require('dotenv').config();
 
 exports.handler = async function (event) {
+    const weekPath = event.Records[0].Sns.Message;
+    const weekAsNumber = Number(weekPath.slice(-1));
+    console.log('week: ', weekAsNumber);
     const s3Client = new S3Client();
 
-    const overallSongRankings = await s3Client.getObjectsInFolder('bitter-jester-test', 'overall-song-rankings/');
+    const overallSongRankings = await s3Client.getObjectsInFolder('bitter-jester-test', `${weekPath}/overall-song-rankings/`);
 
     const finalSongRankings = overallSongRankings.filter(ranking => ranking.isFinalRanking);
 
@@ -28,16 +31,16 @@ exports.handler = async function (event) {
                     totalPoints: songRankingFromJudge.value,
                     songName,
                     bandName,
-                    places: [songRankingFromJudge.placement]
+                    places: [songRankingFromJudge.placement],
+                    week: weekAsNumber
                 })
             }
         })
     });
-    console.log(scoreForEachBand);
-    // await s3Client.put(s3Client.createPutPublicJsonRequest(
-    //     'bitter-jester-test',
-    //     'song-ranking-totals.json',
-    //     JSON.stringify({totalScores: scoreForEachBand, totalFinalRankings: finalSongRankings.length, allSongsAreSubmitted: finalSongRankings.length === overallSongRankings.length})
-    // ));
+    await s3Client.put(s3Client.createPutPublicJsonRequest(
+        'bitter-jester-test',
+        `${weekPath}/song-ranking-totals.json`,
+        JSON.stringify({totalScores: scoreForEachBand, totalFinalRankings: finalSongRankings.length, allSongsAreSubmitted: finalSongRankings.length === overallSongRankings.length})
+    ));
     console.log('Done.');
 };
