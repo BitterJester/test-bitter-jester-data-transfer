@@ -29,12 +29,16 @@ const format = async (applications) => {
 
     const originalSongSubmissions = await new S3Client().getObject('bitter-jester-test', 'original-song-submissions.json');
     extractedApplications.forEach(song => {
-        const numberOfSongsForBand = originalSongSubmissions.originalSongs.filter(app => app.bandName === song.bandName).length;
+        const songForBand = originalSongSubmissions.originalSongs.filter(app => app.bandName === song.bandName);
+        const numberOfSongsForBand = songForBand.length;
 
         if(numberOfSongsForBand === 0){
             song.scheduledWeek = 4;
             originalSongSubmissions.originalSongs.push(song);
         }
+
+        const indexOfCurrentSong = originalSongSubmissions.originalSongs.findIndex(app => app.bandName === song.bandName);
+        originalSongSubmissions.originalSongs[indexOfCurrentSong].lyricsUrl = song.lyricsUrl;
     });
 
     return {
