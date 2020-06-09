@@ -14,11 +14,11 @@ exports.handler = async function (event) {
     const judgesForWeek = listOfJudges.filter(judge => judge.week === weekAsNumber);
     const judgesWhoHaveNotSubmittedAllComments = [];
 
-    const judgesCommentsForWeek = [];
+    let judgesCommentsForWeek = [];
 
     judgesForWeek.forEach(judge => {
         const commentsForJudge = judgesComments.filter(comment => comment.judge.email === judge.emailAddress);
-        judgesCommentsForWeek.concat(commentsForJudge);
+        judgesCommentsForWeek = judgesCommentsForWeek.concat(commentsForJudge);
         const numberOfSongsWithAllComments = commentsForJudge.filter(comment => {
             return comment.initialImpression !== '' && comment.feedback !== '' && comment.favoriteAspect !== '';
         }).length;
