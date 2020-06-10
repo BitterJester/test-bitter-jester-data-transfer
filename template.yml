@@ -254,7 +254,7 @@ Resources:
       Handler: "aggregateCommentsForWeekLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
-      Timeout: 60
+      Timeout: 100
   AggregateCommentsForWeekSnsTopicPolicy:
     Type: AWS::SNS::TopicPolicy
     Properties:
