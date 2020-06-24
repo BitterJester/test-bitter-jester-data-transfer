@@ -19,11 +19,15 @@ const format = async (applications) => {
       return `${domain}${urlParamParts.join('/')}`
     };
 
+    const formatSongDescription = (item) => {
+        return item.replace(/&#039;/g, "'")
+    }
+
     const extractedApplications = extractAnswersFromJotform.extractAnswersFromJotform(applications, jotformAnswerMap)
         .map(item => {
             item.bandPhotoUrl = encodeURI(item.bandPhotoUrl[0]);
             item.lyricsUrl = formatLyrics(encodeURI(item.lyricsUrl[0]));
-            item.songDescription = item.songDescription ? item.songDescription.replace(/&#039;/g, "'") : '';
+            item.songDescription = item.songDescription ? formatSongDescription(item.songDescription) : '';
             return item;
         });
 
@@ -39,6 +43,7 @@ const format = async (applications) => {
 
         const indexOfCurrentSong = originalSongSubmissions.originalSongs.findIndex(app => app.bandName === song.bandName);
         originalSongSubmissions.originalSongs[indexOfCurrentSong].lyricsUrl = song.lyricsUrl;
+        originalSongSubmissions.originalSongs[indexOfCurrentSong].songDescription = formatSongDescription(song.songDescription);
     });
 
     return {
@@ -48,4 +53,4 @@ const format = async (applications) => {
 
 module.exports = {
     format: format
-}
+};

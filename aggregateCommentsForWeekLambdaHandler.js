@@ -2,8 +2,8 @@ const S3Client = require('s3Client').S3Client;
 require('dotenv').config();
 
 exports.handler = async function (event) {
-    const weekPath = 'week=1';
-    const weekAsNumber = 1;
+    const weekPath = event.Records[0].Sns.Message;
+    const weekAsNumber = Number(weekPath.slice(-1));
     console.log('week: ', weekAsNumber);
     const s3Client = new S3Client();
 
@@ -14,7 +14,7 @@ exports.handler = async function (event) {
     const judgesForWeek = listOfJudges.filter(judge => judge.week === weekAsNumber);
 
     const judgesWhoHaveNotSubmittedAllComments = [];
-    const addJudgeIfNotSubmittedAllComments = (commentsForJudge) => {
+    const addJudgeIfNotSubmittedAllComments = (commentsForJudge, judge) => {
         const numberOfSongsWithAllComments = commentsForJudge.filter(comment => {
             return comment.initialImpression !== '' && comment.feedback !== '' && comment.favoriteAspect !== '';
         }).length;
@@ -30,9 +30,9 @@ exports.handler = async function (event) {
     };
 
     const aggregate = (judge) => {
-        const commentsForJudge = judgesComments.filter(comment => comment.judge.email === judge.emailAddress);
+        const commentsForJudge = judgesComments.filter(comment => comment.judge.email.toLowerCase() === judge.emailAddress.toLowerCase());
         addJudgesCommentsForWeek(commentsForJudge);
-        addJudgeIfNotSubmittedAllComments(commentsForJudge)
+        addJudgeIfNotSubmittedAllComments(commentsForJudge, judge)
     };
 
     judgesForWeek.forEach(judge => {
