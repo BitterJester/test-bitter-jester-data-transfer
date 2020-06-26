@@ -30,7 +30,12 @@ exports.handler = async function (event) {
     };
 
     const aggregate = (judge) => {
-        const commentsForJudge = judgesComments.filter(comment => comment.judge.email.toLowerCase() === judge.emailAddress.toLowerCase());
+        let commentsForJudge = judgesComments.filter(comment => comment.judge.email.toLowerCase() === judge.emailAddress.toLowerCase());
+
+        if(weekAsNumber === 5) {
+            commentsForJudge = commentsForJudge.filter(comment => comment.week === weekAsNumber);
+        }
+
         addJudgesCommentsForWeek(commentsForJudge);
         addJudgeIfNotSubmittedAllComments(commentsForJudge, judge)
     };

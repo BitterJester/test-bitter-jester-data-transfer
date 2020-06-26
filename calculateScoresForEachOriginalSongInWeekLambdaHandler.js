@@ -37,10 +37,21 @@ exports.handler = async function (event) {
             }
         })
     });
+
+    const judgesWhoHaveNotSubmittedAllRankings = overallSongRankings.filter(ranking => {
+        return !ranking.isFinalRanking && ranking.judge;
+    })
+        .map(ranking => ranking.judge);
+
     await s3Client.put(s3Client.createPutPublicJsonRequest(
         'bitter-jester-test',
         `${weekPath}/song-ranking-totals.json`,
-        JSON.stringify({totalScores: scoreForEachBand, totalFinalRankings: finalSongRankings.length, allSongsAreSubmitted: finalSongRankings.length === overallSongRankings.length})
+        JSON.stringify({
+            totalScores: scoreForEachBand,
+            totalFinalRankings: finalSongRankings.length,
+            allSongsAreSubmitted: finalSongRankings.length === overallSongRankings.length,
+            judgesWhoHaveNotSubmittedAllRankings
+        })
     ));
     console.log('Done.');
 };

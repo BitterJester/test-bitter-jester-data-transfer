@@ -21,7 +21,7 @@ const format = async (applications) => {
 
     const formatSongDescription = (item) => {
         return item.replace(/&#039;/g, "'")
-    }
+    };
 
     const extractedApplications = extractAnswersFromJotform.extractAnswersFromJotform(applications, jotformAnswerMap)
         .map(item => {
@@ -37,11 +37,16 @@ const format = async (applications) => {
         const numberOfSongsForBand = songForBand.length;
 
         if(numberOfSongsForBand === 0){
-            song.scheduledWeek = 4;
+            song.scheduledWeek = 6;
+            song.scheduledWeeks = [6];
             originalSongSubmissions.originalSongs.push(song);
         }
 
         const indexOfCurrentSong = originalSongSubmissions.originalSongs.findIndex(app => app.bandName === song.bandName);
+        if(song.scheduledWeeks === undefined){
+            originalSongSubmissions.originalSongs[indexOfCurrentSong].scheduledWeeks = [originalSongSubmissions.originalSongs[indexOfCurrentSong].scheduledWeek];
+
+        }
         originalSongSubmissions.originalSongs[indexOfCurrentSong].lyricsUrl = song.lyricsUrl;
         originalSongSubmissions.originalSongs[indexOfCurrentSong].songDescription = formatSongDescription(song.songDescription);
     });
