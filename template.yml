@@ -33,10 +33,10 @@ Resources:
       Code:
           S3Bucket: "bitter-jester-test"
           S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
-      Handler: "writeToS3FromJotFormLambdaHandler.handler"
+      Handler: "getCompletedSubmissionsLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
-      Timeout: 60
+      Timeout: 16
   BandApplicationsUpdatedSnsTopic:
     Type: AWS::SNS::Topic
     Properties:
@@ -254,7 +254,7 @@ Resources:
       Handler: "aggregateCommentsForWeekLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
-      Timeout: 100
+      Timeout: 16
   AggregateCommentsForWeekSnsTopicPolicy:
     Type: AWS::SNS::TopicPolicy
     Properties:

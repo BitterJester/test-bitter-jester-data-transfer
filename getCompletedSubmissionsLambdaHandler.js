@@ -3,15 +3,16 @@ const writeToS3FromJotForm = require('./writeToS3FromJotForm/writeToS3FromJotFor
 const SNSClient = require('./snsClient').SNSClient;
 const formatForS3 = require('./completedApplications/formatForS3');
 
-const BITTER_JESTER_COMPLETED_APPLICATIONS_JOTFORM_FORM_ID = 193466400251149;
-const OUTPUT_FILE_NAME = 'bitter-jester-test.json';
+const BITTER_JESTER_COMPLETED_APPLICATIONS_JOTFORM_FORM_ID = 211443460736149;
+const OUTPUT_FILE_NAME = 'completed-submissions.json';
 
 const snsClient = new SNSClient();
 
 exports.handler = async function (event) {
+    const competition = event.Records[0].Sns.Message;
     await writeToS3FromJotForm.getFormSubmissions(
         BITTER_JESTER_COMPLETED_APPLICATIONS_JOTFORM_FORM_ID,
-        OUTPUT_FILE_NAME,
+        `${competition}/${OUTPUT_FILE_NAME}`,
         formatForS3.format
     );
 

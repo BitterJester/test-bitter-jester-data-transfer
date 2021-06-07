@@ -1,4 +1,4 @@
 node_modules
 .env
 deploy/test-bitter-jester-data-transfer.zip
-.idea/
+.idea/**

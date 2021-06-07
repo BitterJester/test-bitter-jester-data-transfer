@@ -5,8 +5,9 @@ exports.handler = async function (event) {
     const weekPath = event.Records[0].Sns.Message;
     const weekAsNumber = Number(weekPath.slice(-1));
     console.log('week: ', weekAsNumber);
+    console.log('initializing s3client');
     const s3Client = new S3Client();
-
+    console.log('S3Client Initialized.');
     const judgesComments = await s3Client.getObjectsInFolder('bitter-jester-test', 'judges-comments/');
 
     const allJudges = await s3Client.getObjectsInFolder('bitter-jester-test', 'judges-info.json');

@@ -1,10 +1,14 @@
 const AWS = require('aws-sdk');
 
+
 class S3Client {
     constructor() {
+        console.log('constructing s3Client');
         const accessKeyId = process.env.AWS_ACCESS_ID;
         const secretAccessKey = process.env.AWS_SECRET_KEY;
-
+        console.log('values');
+        console.log(accessKeyId);
+        console.log(secretAccessKey);
         this.client = new AWS.S3({
             accessKeyId,
             secretAccessKey
@@ -26,7 +30,7 @@ class S3Client {
     async getObject(bucket = "bitter-jester-test", key = "bitter-jester-test.json") {
         const params = {
             Bucket: bucket,
-            Key: key
+            Key: `competitions/${key}`
         };
         return new Promise((resolve, reject) => {
             this.client.getObject(params, function (err, data) {
@@ -47,7 +51,7 @@ class S3Client {
     ) {
         return {
             Bucket: location,
-            Key: filename,
+            Key: `competitions/${filename}`,
             Body: contents,
             ContentType: 'application/json; charset=utf-8',
             ACL: 'public-read',
@@ -66,7 +70,7 @@ class S3Client {
                 if (err) console.log(err, err.stack);
                 else {
                     const s3Objects = [];
-                    for(let i = 0; i <= data.Contents.length - 1; i++){
+                    for (let i = 0; i <= data.Contents.length - 1; i++) {
                         const item = data.Contents[i];
                         if (item.Key.includes('.json')) {
                             const s3Object = await this.getObject(bucket, item.Key);
@@ -79,7 +83,6 @@ class S3Client {
             })
         })
     }
-
 }
 
 module.exports = {
