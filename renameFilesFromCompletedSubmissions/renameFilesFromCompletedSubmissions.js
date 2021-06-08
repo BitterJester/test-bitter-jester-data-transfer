@@ -16,7 +16,7 @@ jotform.options({
     timeout: 10000
 });
 
-async function getFormFiles(formId) {
+async function getFormFiles(formId, competition) {
     await jotform.getFormSubmissions(formId)
         .then(async function (applications) {
             // 254 = band logo, 253 = band photos, 252 music samples,
@@ -39,11 +39,18 @@ async function getFormFiles(formId) {
                     const urlParts = bandLogoUrl.split('.');
                     const fileNameFormattedBandName = app.bandName.split(' ').join('-');
                     const fileType = urlParts[urlParts.length - 1];
-                    const newFilePath = `/tmp/${fileNameFormattedBandName}_Logo-${index+1}.${fileType}`;
-                    const file = fs.createWriteStream(newFilePath);
+                    const newFilePath = `${fileNameFormattedBandName}_Logo-${index+1}.${fileType}`;
+                    // const file = fs.createWriteStream(newFilePath);
                     const request = https.get(bandLogoUrl, function(response) {
-                        response.pipe(file);
-                        console.error(fs.readdirSync('/tmp/'));
+                        // response.pipe(file);
+                        s3Client.put(
+                            s3Client.createPutPublicJsonRequest(
+                                'bitter-jester-test',
+                                        `competitions/${competition}/applicationFiles/bandName=${fileNameFormattedBandName}/${newFilePath}`,
+                                response
+                            )
+                        )
+                        // console.error(fs.readdirSync('/tmp/'));
                     });
                 });
             });

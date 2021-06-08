@@ -7,5 +7,5 @@ const OUTPUT_FILE_NAME = 'completed-submissions.json';
 
 exports.handler = async function (event) {
     const competition = event.Records[0].Sns.Message;
-    await getFormFiles(BITTER_JESTER_COMPLETED_APPLICATIONS_JOTFORM_FORM_ID);
+    await getFormFiles(BITTER_JESTER_COMPLETED_APPLICATIONS_JOTFORM_FORM_ID, competition);
 };
