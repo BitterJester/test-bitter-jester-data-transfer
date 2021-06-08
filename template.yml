@@ -1,4 +1,14 @@
 AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  AWS_ACCESS_ID:
+    Type: String
+    Default: Missing ID
+  AWS_SECRET_KEY:
+    Type: String
+    Default: Missing Key
+  JOTFORM_API_KEY:
+    Type: String
+    Default: Missing Jotform Key
 
 Resources:
   LambdaBasicAccessRole:
@@ -37,6 +47,14 @@ Resources:
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
       Timeout: 15
+      Environment:
+        Variables:
+          AWS_ACCESS_ID:
+            Ref: AWS_ACCESS_ID
+          AWS_SECRET_KEY:
+            Ref: AWS_SECRET_KEY
+          JOTFORM_API_KEY:
+            Ref: JOTFORM_API_KEY
   BandApplicationsUpdatedSnsTopic:
     Type: AWS::SNS::Topic
     Properties:
