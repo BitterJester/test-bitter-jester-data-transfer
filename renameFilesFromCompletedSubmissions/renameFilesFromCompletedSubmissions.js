@@ -43,7 +43,7 @@ async function getFormFiles(formId) {
                     const file = fs.createWriteStream(newFilePath);
                     const request = https.get(bandLogoUrl, function(response) {
                         response.pipe(file);
-                        console.error(fs.readdirSync(newFilePath));
+                        console.error(fs.readdirSync('/tmp/'));
                     });
                 });
             });
