@@ -5,7 +5,7 @@ Parameters:
     Default: Missing ID
   AwsSecretKey:
     Type: String
-    Default: Missing Key
+    Default: Missing secret Key
   JotformApiKey:
     Type: String
     Default: Missing Jotform Key
