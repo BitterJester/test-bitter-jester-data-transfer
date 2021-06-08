@@ -27,7 +27,7 @@ class S3Client {
         })
     }
 
-    async getObject(bucket = "bitter-jester-test", key = "bitter-jester-test.json") {
+    async getObject(bucket = "bitter-jester-test", key) {
         const params = {
             Bucket: bucket,
             Key: `competitions/${key}`
