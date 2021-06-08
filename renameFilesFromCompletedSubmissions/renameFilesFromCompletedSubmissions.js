@@ -34,32 +34,34 @@ async function getFormFiles(formId, competition) {
 
             const extractedApplications = extractAnswersFromJotform.extractAnswersFromJotform(applications, jotformAnswerMap);
             console.error(extractedApplications);
-            extractedApplications.forEach((app, index) => {
-                app.bandLogoUrls.forEach(bandLogoUrl => {
+            for (let app of extractedApplications) {
+                for (let index = 0; index < app.bandLogoUrls.length; index++) {
+                    const bandLogoUrl = app.bandLogoUrls[index];
                     const urlParts = bandLogoUrl.split('.');
                     const fileNameFormattedBandName = app.bandName.split(' ').join('-');
                     const fileType = urlParts[urlParts.length - 1];
-                    const newFilePath = `${fileNameFormattedBandName}_Logo-${index+1}.${fileType}`;
+                    const newFilePath = `${fileNameFormattedBandName}_Logo-${index + 1}.${fileType}`;
                     // const file = fs.createWriteStream(newFilePath);
-                    const request = https.get(bandLogoUrl, function(response) {
-                        // response.pipe(file);
-                        s3Client.put(
-                            s3Client.createPutPublicJsonRequest(
-                                'bitter-jester-test',
-                                        `competitions/${competition}/applicationFiles/bandName=${fileNameFormattedBandName}/${newFilePath}`,
-                                response
-                            )
+                    const response = await axios.get(bandLogoUrl);
+                    // response.pipe(file);
+                    const s3FilePath = `${competition}/applicationFiles/bandName=${fileNameFormattedBandName}/${newFilePath}`;
+                    await s3Client.put(
+                        s3Client.createPutPublicJsonRequest(
+                            'bitter-jester-test',
+                            s3FilePath,
+                            response
                         )
-                        // console.error(fs.readdirSync('/tmp/'));
-                    });
-                });
-            });
-            // const s3PutRequest = s3Client.createPutPublicJsonRequest(
-            //     s3Bucket,
-            //     filename,
-            //     JSON.stringify(formattedResponse)
-            // );
-            // await s3Client.put(s3PutRequest);
+                    )
+                    console.log(`done with ${s3FilePath}`)
+                    // console.error(fs.readdirSync('/tmp/'));
+                }
+            }
+// const s3PutRequest = s3Client.createPutPublicJsonRequest(
+//     s3Bucket,
+//     filename,
+//     JSON.stringify(formattedResponse)
+// );
+// await s3Client.put(s3PutRequest);
         })
         .fail(function (error) {
             console.log(`Error: ${error}`);
