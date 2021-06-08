@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   node: circleci/node@4.5.0
+  aws-cli: circleci/aws-cli@2.0
 jobs:
   build-and-deploy:
     executor: node/default
@@ -23,6 +24,9 @@ jobs:
             sudo apt-get update
             sudo apt-get install awscli
             aws --version
+      - aws-cli/setup:
+          aws-access-key-id: AWS_ACCESS_ID
+          aws-secret-access-key: AWS_SECRET_KEY
       - node/install-packages:
             cache-path: ~/project/node_modules
             override-ci-command: npm install

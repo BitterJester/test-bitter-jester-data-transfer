@@ -1,12 +1,12 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
-  AWS_ACCESS_ID:
+  AwsAccessID:
     Type: String
     Default: Missing ID
-  AWS_SECRET_KEY:
+  AwsSecretKey:
     Type: String
     Default: Missing Key
-  JOTFORM_API_KEY:
+  JotformApiKey:
     Type: String
     Default: Missing Jotform Key
 
@@ -49,12 +49,8 @@ Resources:
       Timeout: 15
       Environment:
         Variables:
-          AWS_ACCESS_ID:
-            Ref: AWS_ACCESS_ID
-          AWS_SECRET_KEY:
-            Ref: AWS_SECRET_KEY
           JOTFORM_API_KEY:
-            Ref: JOTFORM_API_KEY
+            Ref: JotformApiKey
   BandApplicationsUpdatedSnsTopic:
     Type: AWS::SNS::Topic
     Properties:
