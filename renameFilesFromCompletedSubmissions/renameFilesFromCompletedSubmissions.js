@@ -40,16 +40,16 @@ async function getFormFiles(formId, competition) {
                     const urlParts = bandLogoUrl.split('.');
                     const fileNameFormattedBandName = app.bandName.split(' ').join('-');
                     const fileType = urlParts[urlParts.length - 1];
-                    const newFilePath = `${fileNameFormattedBandName}_Logo-${index + 1}.${fileType}`;
-                    // const file = fs.createWriteStream(newFilePath);
+                    const fullFileNameAfterRename = `${fileNameFormattedBandName}_Logo-${index + 1}.${fileType}`;
+                    const temporaryFilePath = `/tmp/${fullFileNameAfterRename}`;
                     const response = await axios.get(bandLogoUrl);
-                    // response.pipe(file);
-                    const s3FilePath = `${competition}/applicationFiles/bandName=${fileNameFormattedBandName}/${newFilePath}`;
+                    const s3FilePath = `${competition}/applicationFiles/bandName=${fileNameFormattedBandName}/${fullFileNameAfterRename}`;
+                    console.error(response);
                     await s3Client.put(
                         s3Client.createPutPublicJsonRequest(
                             'bitter-jester-test',
                             s3FilePath,
-                            response
+                            response.data
                         )
                     )
                     console.log(`done with ${s3FilePath}`)
