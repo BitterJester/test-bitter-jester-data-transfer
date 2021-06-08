@@ -37,7 +37,9 @@ async function getFormFiles(formId) {
             extractedApplications.forEach((app, index) => {
                 app.bandLogoUrls.forEach(bandLogoUrl => {
                     const urlParts = bandLogoUrl.split('.');
-                    const newFilePath = `./changed-file.${urlParts[urlParts.length - 1]}`;
+                    const fileNameFormattedBandName = app.bandName.split(' ').join('-');
+                    const fileType = urlParts[urlParts.length - 1];
+                    const newFilePath = `/tmp/${fileNameFormattedBandName}_Logo-${index+1}.${fileType}`;
                     const file = fs.createWriteStream(newFilePath);
                     const request = https.get(bandLogoUrl, function(response) {
                         response.pipe(file);
