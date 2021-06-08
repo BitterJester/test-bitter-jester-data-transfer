@@ -36,7 +36,7 @@ Resources:
       Handler: "getCompletedSubmissionsLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
-      Timeout: 16
+      Timeout: 15
   BandApplicationsUpdatedSnsTopic:
     Type: AWS::SNS::Topic
     Properties:
@@ -121,6 +121,17 @@ Resources:
         S3Bucket: "bitter-jester-test"
         S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
       Handler: "generateFridayNightBattleScheduleLambdaHandler.handler"
+      Runtime: "nodejs12.x"
+      Role: !GetAtt LambdaBasicAccessRole.Arn
+      Timeout: 60
+  RenameFilesFromCompletedSubmissions:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: RenameFilesFromCompletedSubmissions
+      Code:
+        S3Bucket: "bitter-jester-test"
+        S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
+      Handler: "renameFilesFromCompletedSubmissionsLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
       Timeout: 60

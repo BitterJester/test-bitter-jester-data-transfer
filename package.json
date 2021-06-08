@@ -4,6 +4,8 @@
     "description": "Test app to transfer data from bitter jester jotform account to custom localized storage.",
     "main": "index.js",
     "scripts": {
+        "buildEnv": "./buildEnv.sh",
+        "deploy": "./deploy/deploy.sh",
         "start": "aws  WriteToS3FromJotForm -e sampleSnsGetCompletedSubmissions.json -t ./template.yml",
         "test": "npm test"
     },
