@@ -1,11 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
-  AwsAccessID:
-    Type: String
-    Default: Missing ID
-  AwsSecretKey:
-    Type: String
-    Default: Missing secret Key
   JotformApiKey:
     Type: String
     Default: Missing Jotform Key
@@ -138,12 +132,6 @@ Resources:
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
       Timeout: 60
-      Environment:
-        Variables:
-          AWS_ACCESS_ID:
-            Ref: AwsAccessID
-          AWS_SECRET_KEY:
-            Ref: AwsSecretKey
   RenameFilesFromCompletedSubmissions:
     Type: AWS::Lambda::Function
     Properties:
