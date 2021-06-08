@@ -27,6 +27,7 @@ jobs:
       - aws-cli/setup:
           aws-access-key-id: AWS_ACCESS_ID
           aws-secret-access-key: AWS_SECRET_KEY
+          aws-region: us-east-1
       - node/install-packages:
             cache-path: ~/project/node_modules
             override-ci-command: npm install
