@@ -138,6 +138,12 @@ Resources:
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
       Timeout: 60
+      Environment:
+        Variables:
+          AWS_ACCESS_ID:
+            Ref: AwsAccessID
+          AWS_SECRET_KEY:
+            Ref: AwsSecretKey
   RenameFilesFromCompletedSubmissions:
     Type: AWS::Lambda::Function
     Properties:
@@ -149,6 +155,10 @@ Resources:
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
       Timeout: 60
+      Environment:
+        Variables:
+          JOTFORM_API_KEY:
+            Ref: JotformApiKey
   GetIncompleteApplicationsFromJotForm:
     Type: AWS::Lambda::Function
     Properties:
@@ -160,6 +170,10 @@ Resources:
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
       Timeout: 60
+      Environment:
+        Variables:
+          JOTFORM_API_KEY:
+            Ref: JotformApiKey
   IncompleteApplicationsFromJotFormSnsTopicPolicy:
     Type: AWS::SNS::TopicPolicy
     Properties:
@@ -209,6 +223,10 @@ Resources:
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
       Timeout: 60
+      Environment:
+        Variables:
+          JOTFORM_API_KEY:
+            Ref: JotformApiKey
   UpdateOriginalSongWeeklySchedule:
     Type: AWS::Lambda::Function
     Properties:

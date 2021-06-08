@@ -1,6 +1,7 @@
 require('dotenv').config();
 const jotform = require('jotform');
 const S3Client = require('../s3Client').S3Client;
+const extractAnswersFromJotform = require('../writeToS3FromJotForm/extractAnswersFromJotforrm');
 
 const JOTFORM_API_KEY = process.env.JOTFORM_API_KEY;
 const s3Bucket = 'bitter-jester-test';
@@ -12,28 +13,21 @@ jotform.options({
     apiKey: JOTFORM_API_KEY,
     timeout: 10000
 });
-// {
-//     "responseCode": 200,
-//     "message": "success",
-//     "content": [
-//     {
-//         "name": "picture.png",
-//         "type": "image/png",
-//         "size": "9692",
-//         "username": "johnsmith",
-//         "form_id": "31754366679872",
-//         "submission_id": "237977932346236318",
-//         "date": "2013-06-25 09:58:52",
-//         "url": "http://www.jotform.com/uploads/johnsmith/31754366679872/237977932346236318/screen.png",
-//     }
-// ],
-//     "limit-left": 9962
-// }
-async function getFormFiles(formId) {
-    await jotform.getFormFiles(formId)
-        .then(async function (response) {
-            console.error(response);
 
+async function getFormFiles(formId) {
+    await jotform.getFormSubmissions(formId)
+        .then(async function (applications) {
+            // 254 = band logo, 253 = band photos, 252 music samples,
+
+            const jotformAnswerMap = {
+                bandLogoUrls: '254',
+                bandPhotosUrls: '253',
+                musicSamplesUrls: '252',
+                bandName: '39',
+            };
+
+            const extractedApplications = extractAnswersFromJotform.extractAnswersFromJotform(applications, jotformAnswerMap);
+            console.error(extractedApplications);
             // const s3PutRequest = s3Client.createPutPublicJsonRequest(
             //     s3Bucket,
             //     filename,
