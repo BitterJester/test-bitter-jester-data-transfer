@@ -42,7 +42,7 @@ async function getFormFiles(formId, competition) {
                     const fileType = urlParts[urlParts.length - 1];
                     const fullFileNameAfterRename = `${fileNameFormattedBandName}_Logo-${index + 1}.${fileType}`;
                     const temporaryFilePath = `/tmp/${fullFileNameAfterRename}`;
-                    const fileBuffer = fs.readFileSync(temporaryFilePath);
+                    // const fileBuffer = fs.readFileSync(temporaryFilePath);
                     const response = await axios.get(bandLogoUrl);
                     const s3FilePath = `${competition}/applicationFiles/bandName=${fileNameFormattedBandName}/${fullFileNameAfterRename}`;
                     console.error(s3FilePath);
