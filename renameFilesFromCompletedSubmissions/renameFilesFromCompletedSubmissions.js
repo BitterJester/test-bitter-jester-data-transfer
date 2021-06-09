@@ -47,12 +47,13 @@ async function getFormFiles(formId, competition) {
                     const s3FilePath = `${competition}/applicationFiles/bandName=${fileNameFormattedBandName}/${fullFileNameAfterRename}`;
                     console.error(s3FilePath);
                     console.error(response);
+                    const contentType = fileType === 'jpeg' ? 'image/jpeg' : 'image/png';
                     await s3Client.put(
                         s3Client.createPutPublicJsonRequest(
                             'bitter-jester-test',
                             s3FilePath,
                             response.data,
-                            'image/jpeg'
+                            contentType
                         )
                     )
                     console.log(`done with ${s3FilePath}`)
