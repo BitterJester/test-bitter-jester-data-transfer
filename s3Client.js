@@ -19,6 +19,7 @@ class S3Client {
         return new Promise((resolve, reject) => {
             this.client.putObject(request, (error, data) => {
                 if (error) {
+                    console.error('THERE WAS AN ERROR');
                     return reject(error);
                 }
 
@@ -47,13 +48,14 @@ class S3Client {
     createPutPublicJsonRequest(
         location,
         filename,
-        contents
+        contents,
+        contentType = 'application/json; charset=utf-8'
     ) {
         return {
             Bucket: location,
             Key: `competitions/${filename}`,
             Body: contents,
-            ContentType: 'application/json; charset=utf-8',
+            ContentType: contentType,
             ACL: 'public-read',
             CacheControl: 'max-age=60'
         };
