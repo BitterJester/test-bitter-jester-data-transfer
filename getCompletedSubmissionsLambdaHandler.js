@@ -18,7 +18,7 @@ exports.handler = async function (event) {
 
     const snsMessage = {
         TopicArn: 'arn:aws:sns:us-east-1:771384749710:BandApplicationUpdatedSnsTopic',
-        Message: 'Applications Updated'
+        Message: competition
     };
 
     await snsClient.publishSNSMessage(snsMessage);

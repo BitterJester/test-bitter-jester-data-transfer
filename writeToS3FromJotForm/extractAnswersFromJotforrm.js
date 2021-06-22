@@ -1,5 +1,7 @@
 const extractAnswersFromJotform = (applications, answerQuestionIdMap) => {
-    const applicationAnswersBySubmission = applications.map(application => {
+    const applicationAnswersBySubmission = applications
+        .filter(application => application.status === 'ACTIVE')
+        .map(application => {
         return application.answers;
     });
 
