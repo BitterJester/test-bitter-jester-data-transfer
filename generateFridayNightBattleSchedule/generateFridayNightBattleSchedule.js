@@ -7,10 +7,10 @@ function generateFridayNightBattleSchedule(completedApplications) {
 
     const fullyAvailableBands = completedApplications.filter(app => app.isBandAvailableOnAllFridays);
 
-    const firstChoiceNightOne = getAvailableBandsForNight('5');
-    const firstChoiceNightTwo = getAvailableBandsForNight('12');
-    const firstChoiceNightThree = getAvailableBandsForNight('19');
-    const firstChoiceNightFour = getAvailableBandsForNight('26');
+    const firstChoiceNightOne = getAvailableBandsForNight('23');
+    const firstChoiceNightTwo = getAvailableBandsForNight('30');
+    const firstChoiceNightThree = getAvailableBandsForNight('6');
+    const firstChoiceNightFour = getAvailableBandsForNight('13');
 
     const schedule = {
         fridayNightOne: {
