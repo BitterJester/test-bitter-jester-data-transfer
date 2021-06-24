@@ -46,13 +46,16 @@ async function getFormFiles(formId, competition) {
                 bandLogoUrls: '254',
                 bandPhotosUrls: '253',
                 musicSamplesUrls: '252',
+                stagePlotUrls: '264',
+                musicSampleTitle1: '544',
+                musicSampleTitle2: '546',
                 bandName: '39',
             };
 
             const extractedApplications = extractAnswersFromJotform.extractAnswersFromJotform(applications, jotformAnswerMap);
             console.error(extractedApplications);
             for (let app of extractedApplications) {
-                const fileNameFormattedBandName = app.bandName.trim().split(' ').join('-');
+                const fileNameFormattedBandName = app.bandName.trim().replace(/[^\w\s]/gi, '').split(' ').join('-');
                 const filePathForBand = `${competition}/application-files/bandName=${fileNameFormattedBandName}/`;
                 for (let index = 0; index < app.bandLogoUrls.length; index++) {
                     try {
@@ -112,17 +115,21 @@ async function getFormFiles(formId, competition) {
                             )
                         );
                         fs.unlinkSync(temporaryFilePath);
-                        console.log(`done with song ${s3FilePath}`);
+                        console.log(`done with photo ${s3FilePath}`);
                     } catch (e) {
                         console.error('Error with photo: ', e);
                     }
                 }
 
                 for(let index = 0; index < app.musicSamplesUrls.length; index++){
+                    // Band Name_Music 01_Song Name.xyz
+                    // Band Name_Music 02_Song Name.xyz*
                     try{
                         const musicSamplesUrl = app.musicSamplesUrls[index];
                         const fileType = getFileType(musicSamplesUrl);
-                        const fileName = `${fileNameFormattedBandName}_Music-${index + 1}.${fileType}`;
+                        const songName = index === 0 ? app.musicSampleTitle1 : app.musicSampleTitle2;
+                        const formattedSongName = songName.trim().replace(/[^\w\s]/gi, '').split(' ').join('-');
+                        const fileName = `${fileNameFormattedBandName}_Music-${index + 1}_${formattedSongName}.${fileType}`;
                         const temporaryFilePath = `${tmpFilePath}${fileName}`;
                         await downloadFile(musicSamplesUrl, temporaryFilePath);
                         const s3FilePath = `${filePathForBand}${fileName}`;
@@ -147,6 +154,38 @@ async function getFormFiles(formId, competition) {
                         console.log(`done with song ${s3FilePath}`)
                     } catch(e) {
                         console.error('Error with song: ', e);
+                    }
+                }
+
+                for(let index = 0; index < app.stagePlotUrls.length; index++){
+                    try{
+                        const stagePlotUrl = app.stagePlotUrls[index];
+                        const fileType = getFileType(stagePlotUrl);
+                        const fileName = `${fileNameFormattedBandName}_Stage-Plot-${index + 1}.${fileType}`;
+                        const temporaryFilePath = `${tmpFilePath}${fileName}`;
+                        await downloadFile(stagePlotUrl, temporaryFilePath);
+                        const s3FilePath = `${filePathForBand}${fileName}`;
+                        const contentType = `image/${fileType}`;
+                        await s3Client.put(
+                            s3Client.createPutPublicJsonRequest(
+                                'bitter-jester-test',
+                                s3FilePath,
+                                fs.readFileSync(temporaryFilePath),
+                                contentType
+                            )
+                        );
+                        await s3Client.put(
+                            s3Client.createPutPublicJsonRequest(
+                                'bitter-jester-test',
+                                `${ALL_FILES_PATH}${fileName}`,
+                                fs.readFileSync(temporaryFilePath),
+                                contentType
+                            )
+                        );
+                        fs.unlinkSync(temporaryFilePath);
+                        console.log(`done with stage plot ${s3FilePath}`)
+                    } catch(e) {
+                        console.error('Error with stage plot: ', e);
                     }
                 }
             }
