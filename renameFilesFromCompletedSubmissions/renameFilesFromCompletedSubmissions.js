@@ -38,7 +38,7 @@ function getFileType(url) {
 
 
 async function getFormFiles(formId, competition) {
-    const ALL_FILES_PATH = `${competition}/application-files/`;
+    const ALL_FILES_PATH = `${competition}/application-files/all/`;
     fs.mkdirSync('/tmp/files');
     await jotform.getFormSubmissions(formId)
         .then(async function (applications) {
