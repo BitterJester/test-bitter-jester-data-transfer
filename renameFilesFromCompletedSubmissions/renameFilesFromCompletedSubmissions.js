@@ -122,13 +122,11 @@ async function getFormFiles(formId, competition) {
                 }
 
                 for(let index = 0; index < app.musicSamplesUrls.length; index++){
-                    // Band Name_Music 01_Song Name.xyz
-                    // Band Name_Music 02_Song Name.xyz*
                     try{
                         const musicSamplesUrl = app.musicSamplesUrls[index];
                         const fileType = getFileType(musicSamplesUrl);
                         const songName = index === 0 ? app.musicSampleTitle1 : app.musicSampleTitle2;
-                        const formattedSongName = songName.trim().replace(/[^\w\s]/gi, '').split(' ').join('-');
+                        const formattedSongName = songName ? songName.trim().replace(/[^\w\s]/gi, '').split(' ').join('-') : 'NO-NAME';
                         const fileName = `${fileNameFormattedBandName}_Music-${index + 1}_${formattedSongName}.${fileType}`;
                         const temporaryFilePath = `${tmpFilePath}${fileName}`;
                         await downloadFile(musicSamplesUrl, temporaryFilePath);
