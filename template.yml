@@ -142,7 +142,7 @@ Resources:
       Handler: "renameFilesFromCompletedSubmissionsLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
-      Timeout: 60
+      Timeout: 300
       Environment:
         Variables:
           JOTFORM_API_KEY:

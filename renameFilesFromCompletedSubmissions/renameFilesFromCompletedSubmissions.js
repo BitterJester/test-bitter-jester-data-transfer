@@ -37,12 +37,6 @@ function getFileType(url) {
 async function getFormFiles(formId, competition) {
     await jotform.getFormSubmissions(formId)
         .then(async function (applications) {
-            // 254 = band logo, 253 = band photos, 252 music samples,
-            // Band Name_Music 01_Song Name.xyz
-            // Band Name_Music 02_Song Name.xyz*
-            //
-            // Band Name_Photo 01.xyz
-            // Band Name_Photo 02.xyz*
             const jotformAnswerMap = {
                 bandLogoUrls: '254',
                 bandPhotosUrls: '253',
@@ -53,7 +47,7 @@ async function getFormFiles(formId, competition) {
             const extractedApplications = extractAnswersFromJotform.extractAnswersFromJotform(applications, jotformAnswerMap);
             console.error(extractedApplications);
             for (let app of extractedApplications) {
-                const fileNameFormattedBandName = app.bandName.split(' ').join('-');
+                const fileNameFormattedBandName = app.bandName.trim().split(' ').join('-');
 
                 for (let index = 0; index < app.bandLogoUrls.length; index++) {
                     const bandLogoUrl = app.bandLogoUrls[index];
@@ -73,7 +67,26 @@ async function getFormFiles(formId, competition) {
                     )
                     console.log(`done with logo ${s3FilePath}`)
                 }
-                // Band Name_Music 01_Song Name.xyz
+
+                for(let index = 0; index < app.bandPhotosUrls.length; index++){
+                    const bandPhotoUrl = app.bandPhotosUrls[index];
+                    const fileType = getFileType(bandPhotoUrl);
+                    const fileName = `${fileNameFormattedBandName}_Photo-${index + 1}.${fileType}`;
+                    const temporaryFilePath = `/tmp/${fileName}`;
+                    await downloadFile(bandPhotoUrl, temporaryFilePath);
+                    const s3FilePath = `${competition}/application-files/bandName=${fileNameFormattedBandName}/${fileName}`;
+                    const contentType = `image/${fileType}`;
+                    await s3Client.put(
+                        s3Client.createPutPublicJsonRequest(
+                            'bitter-jester-test',
+                            s3FilePath,
+                            fs.readFileSync(temporaryFilePath),
+                            contentType
+                        )
+                    )
+                    console.log(`done with song ${s3FilePath}`)
+                }
+
                 for(let index = 0; index < app.musicSamplesUrls.length; index++){
                     const musicSamplesUrl = app.musicSamplesUrls[index];
                     const fileType = getFileType(musicSamplesUrl);
