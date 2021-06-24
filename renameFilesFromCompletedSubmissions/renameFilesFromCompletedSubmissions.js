@@ -3,12 +3,10 @@ const jotform = require('jotform');
 const S3Client = require('../s3Client').S3Client;
 const extractAnswersFromJotform = require('../writeToS3FromJotForm/extractAnswersFromJotforrm');
 const axios = require("axios");
-const https = require('https');
 const fs = require('fs');
 const JOTFORM_API_KEY = process.env.JOTFORM_API_KEY;
-const s3Bucket = 'bitter-jester-test';
-import * as stream from 'stream';
-import { promisify } from 'util';
+const stream = require('stream');
+const util = require('util');
 const s3Client = new S3Client();
 
 jotform.options({
@@ -17,7 +15,7 @@ jotform.options({
     timeout: 10000
 });
 
-const finished = promisify(stream.finished);
+const finished = util.promisify(stream.finished);
 
 async function downloadFile(fileUrl, outputLocationPath) {
     const writer = fs.createWriteStream(outputLocationPath);

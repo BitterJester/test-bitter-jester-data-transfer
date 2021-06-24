@@ -6,7 +6,7 @@
     "scripts": {
         "buildEnv": "./buildEnv.sh",
         "deploy": "./deploy/deploy.sh",
-        "start": "aws  WriteToS3FromJotForm -e sampleSnsGetCompletedSubmissions.json -t ./template.yml",
+        "start": "aws  WriteToS3FromJotForm -e just-competition-sns-message.json -t ./template.yml",
         "test": "npm test"
     },
     "author": "Spencer Kasper",
