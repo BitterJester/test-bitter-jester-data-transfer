@@ -31,21 +31,6 @@ async function downloadFile(fileUrl, outputLocationPath) {
     });
 }
 
-function zipDirectory(source, out, fileName) {
-    const archive = archiver('zip', { zlib: { level: 9 }});
-    const stream = fs.createWriteStream(out);
-
-    return new Promise((resolve, reject) => {
-        archive
-            .directory(source, '/', {name: fileName})
-            .on('error', err => reject(err))
-            .pipe(stream);
-
-        stream.on('close', () => resolve());
-        archive.finalize();
-    });
-}
-
 function getFileType(url) {
     const urlParts = url.split('.');
     return urlParts[urlParts.length - 1];
@@ -83,6 +68,7 @@ async function getFormFiles(formId, competition) {
                             contentType
                         )
                     )
+                    fs.unlinkSync(temporaryFilePath);
                     console.log(`done with logo ${s3FilePath}`)
                 }
 
@@ -102,6 +88,7 @@ async function getFormFiles(formId, competition) {
                             contentType
                         )
                     )
+                    fs.unlinkSync(temporaryFilePath);
                     console.log(`done with song ${s3FilePath}`)
                 }
 
@@ -121,17 +108,10 @@ async function getFormFiles(formId, competition) {
                             contentType
                         )
                     )
+                    fs.unlinkSync(temporaryFilePath);
                     console.log(`done with song ${s3FilePath}`)
                 }
             }
-            await zipDirectory(tmpFilePath, `/tmp/application-files.zip`);
-            await s3Client.put(
-                s3Client.createPutPublicJsonRequest(
-                    'bitter-jester-test',
-                    `${competition}/application-files/application-files.zip`,
-                    fs.readFileSync('/tmp/application-files.zip')
-                )
-            )
         })
         .fail(function (error) {
             console.log(`Error: ${error}`);
