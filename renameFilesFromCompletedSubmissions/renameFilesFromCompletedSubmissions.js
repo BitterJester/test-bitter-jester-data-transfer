@@ -55,7 +55,7 @@ async function getFormFiles(formId, competition) {
             const extractedApplications = extractAnswersFromJotform.extractAnswersFromJotform(applications, jotformAnswerMap);
             console.error(extractedApplications);
             for (let app of extractedApplications) {
-                const fileNameFormattedBandName = app.bandName.trim().replace(/[^\w\s]/gi, '').split(' ').join('-');
+                const fileNameFormattedBandName = app.bandName.trim().replace(/[^\w\s&]/gi, '').split(' ').join('-');
                 const filePathForBand = `${competition}/application-files/bandName=${fileNameFormattedBandName}/`;
                 for (let index = 0; index < app.bandLogoUrls.length; index++) {
                     try {
@@ -126,7 +126,7 @@ async function getFormFiles(formId, competition) {
                         const musicSamplesUrl = app.musicSamplesUrls[index];
                         const fileType = getFileType(musicSamplesUrl);
                         const songName = index === 0 ? app.musicSampleTitle1 : app.musicSampleTitle2;
-                        const formattedSongName = songName ? songName.trim().replace(/[^\w\s]/gi, '').split(' ').join('-') : 'NO-NAME';
+                        const formattedSongName = songName ? songName.trim().replace(/[^\w\s&]/gi, '').split(' ').join('-') : 'NO-NAME';
                         const fileName = `${fileNameFormattedBandName}_Music-${index + 1}_${formattedSongName}.${fileType}`;
                         const temporaryFilePath = `${tmpFilePath}${fileName}`;
                         await downloadFile(musicSamplesUrl, temporaryFilePath);
