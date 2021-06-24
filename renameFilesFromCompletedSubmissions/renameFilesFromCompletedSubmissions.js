@@ -90,7 +90,6 @@ async function getFormFiles(formId, competition) {
                             contentType
                         )
                     )
-                    fs.rmSync(temporaryFilePath);
                     console.log(`done with song ${s3FilePath}`)
                 }
             }
