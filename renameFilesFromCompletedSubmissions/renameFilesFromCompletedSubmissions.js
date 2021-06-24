@@ -7,7 +7,8 @@ const https = require('https');
 const fs = require('fs');
 const JOTFORM_API_KEY = process.env.JOTFORM_API_KEY;
 const s3Bucket = 'bitter-jester-test';
-
+import * as stream from 'stream';
+import { promisify } from 'util';
 const s3Client = new S3Client();
 
 jotform.options({
@@ -15,6 +16,20 @@ jotform.options({
     apiKey: JOTFORM_API_KEY,
     timeout: 10000
 });
+
+const finished = promisify(stream.finished);
+
+async function downloadFile(fileUrl, outputLocationPath) {
+    const writer = fs.createWriteStream(outputLocationPath);
+    return axios({
+        method: 'get',
+        url: fileUrl,
+        responseType: 'stream',
+    }).then(async response => {
+        response.data.pipe(writer);
+        return finished(writer);
+    });
+}
 
 async function getFormFiles(formId, competition) {
     await jotform.getFormSubmissions(formId)
@@ -41,32 +56,21 @@ async function getFormFiles(formId, competition) {
                     const fileNameFormattedBandName = app.bandName.split(' ').join('-');
                     const fileType = urlParts[urlParts.length - 1];
                     const fullFileNameAfterRename = `${fileNameFormattedBandName}_Logo-${index + 1}.${fileType}`;
-                    const response = await axios.get(bandLogoUrl);
                     const temporaryFilePath = `/tmp/${fullFileNameAfterRename}`;
-                    // fs.writeFileSync(temporaryFilePath, response.data);
-                    // const fileBuffer = fs.readFileSync(temporaryFilePath);
-                    const s3FilePath = `${competition}/applicationFiles/bandName=${fileNameFormattedBandName}/${fullFileNameAfterRename}`;
-                    console.error(s3FilePath);
-                    console.error(response);
+                    await downloadFile(bandLogoUrl, temporaryFilePath);
+                    const s3FilePath = `${competition}/application-files/bandName=${fileNameFormattedBandName}/${fullFileNameAfterRename}`;
                     const contentType = fileType === 'jpeg' ? 'image/jpeg' : 'image/png';
                     await s3Client.put(
                         s3Client.createPutPublicJsonRequest(
                             'bitter-jester-test',
                             s3FilePath,
-                            Buffer.from(response.data, 'base64'),
+                            fs.readFileSync(temporaryFilePath),
                             contentType
                         )
                     )
                     console.log(`done with ${s3FilePath}`)
-                    // console.error(fs.readdirSync('/tmp/'));
                 }
             }
-// const s3PutRequest = s3Client.createPutPublicJsonRequest(
-//     s3Bucket,
-//     filename,
-//     JSON.stringify(formattedResponse)
-// );
-// await s3Client.put(s3PutRequest);
         })
         .fail(function (error) {
             console.log(`Error: ${error}`);

@@ -40,7 +40,7 @@ Resources:
       Handler: "getCompletedSubmissionsLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
-      Timeout: 20
+      Timeout: 30
       Environment:
         Variables:
           JOTFORM_API_KEY:
