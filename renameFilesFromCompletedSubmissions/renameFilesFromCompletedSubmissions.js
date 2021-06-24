@@ -52,6 +52,7 @@ function getFileType(url) {
 }
 
 async function getFormFiles(formId, competition) {
+    fs.mkdirSync('/tmp/files');
     await jotform.getFormSubmissions(formId)
         .then(async function (applications) {
             const jotformAnswerMap = {
@@ -123,11 +124,11 @@ async function getFormFiles(formId, competition) {
                     console.log(`done with song ${s3FilePath}`)
                 }
             }
-            await zipDirectory(tmpFilePath, `/tmp/packaged.zip`);
+            await zipDirectory(tmpFilePath, `/tmp/application-files.zip`);
             await s3Client.put(
                 s3Client.createPutPublicJsonRequest(
                     'bitter-jester-test',
-                    `${competition}/application-files/packaged.zip`,
+                    `${competition}/application-files/application-files.zip`,
                     fs.readFileSync('/tmp/application-files.zip')
                 )
             )
