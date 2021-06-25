@@ -46,13 +46,13 @@ class S3Client {
     }
 
     createPutPublicJsonRequest(
-        location,
+        bucket,
         filename,
         contents,
         contentType = 'application/json; charset=utf-8'
     ) {
         return {
-            Bucket: location,
+            Bucket: bucket,
             Key: `competitions/${filename}`,
             Body: contents,
             ContentType: contentType,

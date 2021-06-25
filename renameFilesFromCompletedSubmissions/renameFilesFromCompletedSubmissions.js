@@ -53,6 +53,11 @@ async function getFormFiles(formId, competition) {
             };
 
             const extractedApplications = extractAnswersFromJotform.extractAnswersFromJotform(applications, jotformAnswerMap);
+            await s3Client.put(s3Client.createPutPublicJsonRequest(
+                'bitter-jester-test',
+                `${competition}/uploaded-files.json`,
+                JSON.stringify(extractedApplications),
+            ));
             console.error(extractedApplications);
             for (let app of extractedApplications) {
                 const fileNameFormattedBandName = app.bandName.trim().replace(/[^\w\s&]/gi, '').split(' ').join('-');
@@ -84,13 +89,13 @@ async function getFormFiles(formId, competition) {
                         );
                         fs.unlinkSync(temporaryFilePath);
                         console.log(`done with logo ${s3FilePath}`)
-                    } catch(e) {
+                    } catch (e) {
                         console.error('Error with logo: ', e);
                     }
                 }
 
-                for(let index = 0; index < app.bandPhotosUrls.length; index++){
-                    try{
+                for (let index = 0; index < app.bandPhotosUrls.length; index++) {
+                    try {
                         const bandPhotoUrl = app.bandPhotosUrls[index];
                         const fileType = getFileType(bandPhotoUrl);
                         const fileName = `${fileNameFormattedBandName}_Photo-${index + 1}.${fileType}`;
@@ -121,8 +126,8 @@ async function getFormFiles(formId, competition) {
                     }
                 }
                 const allMusicSampleUrlsForApp = app.musicSampleUrls2 ? [...app.musicSamplesUrls, ...app.musicSampleUrls2] : app.musicSamplesUrls;
-                for(let index = 0; index < allMusicSampleUrlsForApp.length; index++){
-                    try{
+                for (let index = 0; index < allMusicSampleUrlsForApp.length; index++) {
+                    try {
                         const musicSamplesUrl = allMusicSampleUrlsForApp[index];
                         const fileType = getFileType(musicSamplesUrl);
                         const songName = index === 0 ? app.musicSampleTitle1 : app.musicSampleTitle2;
@@ -150,13 +155,13 @@ async function getFormFiles(formId, competition) {
                         );
                         fs.unlinkSync(temporaryFilePath);
                         console.log(`done with song ${s3FilePath}`)
-                    } catch(e) {
+                    } catch (e) {
                         console.error('Error with song: ', e);
                     }
                 }
 
-                for(let index = 0; index < app.stagePlotUrls.length; index++){
-                    try{
+                for (let index = 0; index < app.stagePlotUrls.length; index++) {
+                    try {
                         const stagePlotUrl = app.stagePlotUrls[index];
                         const fileType = getFileType(stagePlotUrl);
                         const fileName = `${fileNameFormattedBandName}_Stage-Plot-${index + 1}.${fileType}`;
@@ -182,7 +187,7 @@ async function getFormFiles(formId, competition) {
                         );
                         fs.unlinkSync(temporaryFilePath);
                         console.log(`done with stage plot ${s3FilePath}`)
-                    } catch(e) {
+                    } catch (e) {
                         console.error('Error with stage plot: ', e);
                     }
                 }
