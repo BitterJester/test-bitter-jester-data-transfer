@@ -46,6 +46,7 @@ async function getFormFiles(formId, competition) {
                 bandLogoUrls: '254',
                 bandPhotosUrls: '253',
                 musicSamplesUrls: '252',
+                musicSampleUrls2: '543',
                 stagePlotUrls: '264',
                 musicSampleTitle1: '544',
                 musicSampleTitle2: '546',
@@ -120,10 +121,10 @@ async function getFormFiles(formId, competition) {
                         console.error('Error with photo: ', e);
                     }
                 }
-
-                for(let index = 0; index < app.musicSamplesUrls.length; index++){
+                const allMusicSampleUrlsForApp = app.musicSampleUrls2 ? [...app.musicSamplesUrls, ...app.musicSampleUrls2] : app.musicSamplesUrls;
+                for(let index = 0; index < allMusicSampleUrlsForApp.length; index++){
                     try{
-                        const musicSamplesUrl = app.musicSamplesUrls[index];
+                        const musicSamplesUrl = allMusicSampleUrlsForApp[index];
                         const fileType = getFileType(musicSamplesUrl);
                         const songName = index === 0 ? app.musicSampleTitle1 : app.musicSampleTitle2;
                         const formattedSongName = songName ? songName.trim().replace(/[^\w\s&]/gi, '').split(' ').join('-') : 'NO-NAME';
