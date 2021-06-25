@@ -36,12 +36,13 @@ function getFileType(url) {
     return urlParts[urlParts.length - 1];
 }
 
-const getUploadedFile = (fileName, fileType, type, url, title = '') => {
+const getUploadedFile = (fileName, fileType, type, url, bandName, title = '') => {
     return {
         fileName,
         fileType,
         type,
         url,
+        bandName,
         title
     };
 }
@@ -99,7 +100,7 @@ async function getFormFiles(formId, competition, shouldDownloadFiles) {
                         const s3FilePath = `${competition}/application-files/bandName=${fileNameFormattedBandName}/${fullFileNameAfterRename}`;
                         const contentType = fileType === 'jpeg' ? 'image/jpeg' : 'image/png';
                         await downloadFromJotformAndWriteToS3(fullFileNameAfterRename, bandLogoUrl, fileType, s3FilePath, contentType);
-                        allFiles.push(getUploadedFile(fullFileNameAfterRename, fileType, 'logo', bandLogoUrl));
+                        allFiles.push(getUploadedFile(fullFileNameAfterRename, fileType, 'logo', bandLogoUrl, app.bandName));
                         console.log(`done with logo ${s3FilePath}`)
                     } catch (e) {
                         console.error('Error with logo: ', e);
@@ -113,7 +114,7 @@ async function getFormFiles(formId, competition, shouldDownloadFiles) {
                         const fileName = `${fileNameFormattedBandName}_Photo-${index + 1}.${fileType}`;
                         const s3FilePath = `${filePathForBand}${fileName}`;
                         await downloadFromJotformAndWriteToS3(fileName, bandPhotoUrl, s3FilePath, `image/${fileType}`);
-                        allFiles.push(getUploadedFile(fileName, fileType, 'band_photo', bandPhotoUrl));
+                        allFiles.push(getUploadedFile(fileName, fileType, 'band_photo', bandPhotoUrl, app.bandName));
                         console.log(`done with photo ${s3FilePath}`);
                     } catch (e) {
                         console.error('Error with photo: ', e);
@@ -130,7 +131,7 @@ async function getFormFiles(formId, competition, shouldDownloadFiles) {
                         const s3FilePath = `${filePathForBand}${fileName}`;
                         const contentType = fileType === 'mp3' ? 'audio/mpeg' : `audio/${fileType}`;
                         await downloadFromJotformAndWriteToS3(fileName, musicSamplesUrl, fileType, s3FilePath, contentType)
-                        allFiles.push(getUploadedFile(fileName, fileType, 'music', musicSamplesUrl, songName));
+                        allFiles.push(getUploadedFile(fileName, fileType, 'music', musicSamplesUrl, app.bandName, songName));
                         console.log(`done with song ${s3FilePath}`)
                     } catch (e) {
                         console.error('Error with song: ', e);
@@ -144,7 +145,7 @@ async function getFormFiles(formId, competition, shouldDownloadFiles) {
                         const fileName = `${fileNameFormattedBandName}_Stage-Plot-${index + 1}.${fileType}`;
                         const s3FilePath = `${filePathForBand}${fileName}`;
                         await downloadFromJotformAndWriteToS3(fileName, fileType, stagePlotUrl, s3FilePath, `image/${fileType}`);
-                        allFiles.push(getUploadedFile(fileName, fileType, 'stage_plot', stagePlotUrl));
+                        allFiles.push(getUploadedFile(fileName, fileType, 'stage_plot', stagePlotUrl, app.bandName));
                         console.log(`done with stage plot ${s3FilePath}`)
                     } catch (e) {
                         console.error('Error with stage plot: ', e);
