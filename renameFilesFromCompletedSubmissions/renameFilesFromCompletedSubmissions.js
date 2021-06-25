@@ -9,7 +9,7 @@ const JOTFORM_API_KEY = process.env.JOTFORM_API_KEY;
 const stream = require('stream');
 const util = require('util');
 const s3Client = new S3Client();
-const tmpFilePath = '/tmp/files/'
+const tmpFilePath = '/tmp/'
 
 jotform.options({
     debug: true,
@@ -39,7 +39,6 @@ function getFileType(url) {
 
 async function getFormFiles(formId, competition) {
     const ALL_FILES_PATH = `${competition}/application-files/all/`;
-    fs.mkdirSync('/tmp/files');
     await jotform.getFormSubmissions(formId)
         .then(async function (applications) {
             const jotformAnswerMap = {
