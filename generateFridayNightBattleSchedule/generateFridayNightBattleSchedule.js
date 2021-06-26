@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-function generateFridayNightBattleSchedule(completedApplications) {
+function generateFridayNightBattleSchedule(completedApplications, previousFridayNightSchedule) {
     const getAvailableBandsForNight = (fridayNightChoice) => {
         return completedApplications.filter(app => app.firstChoiceFridayNight.includes(fridayNightChoice));
     };
