@@ -8,8 +8,7 @@ const s3Bucket = 'bitter-jester-test';
 exports.handler = async function (event, context) {
     const competition = event.Records[0].Sns.Message;
     const item = await s3Client.getObject(s3Bucket, `${competition}/completed-submissions.json`);
-    const previousFridayNightSchedule = await s3Client.getObject(s3Bucket, `${competition}/friday-night-schedule.json`);
-    const schedule = await generateFridayNightBattleSchedule.generateFridayNightBattleSchedule(item.completedApplications, previousFridayNightSchedule);
+    const schedule = await generateFridayNightBattleSchedule.generateFridayNightBattleSchedule(item.completedApplications);
     const s3PutRequest = s3Client.createPutPublicJsonRequest(
         s3Bucket,
         `${competition}/friday-night-schedule.json`,
