@@ -36,13 +36,14 @@ function getFileType(url) {
     return urlParts[urlParts.length - 1];
 }
 
-const getUploadedFile = (fileName, fileType, type, url, bandName, title = '') => {
+const getUploadedFile = (fileName, fileType, type, url, bandName, contentType, title = '') => {
     return {
         fileName,
         fileType,
         type,
         url,
         bandName,
+        contentType,
         title
     };
 }
@@ -100,7 +101,7 @@ async function getFormFiles(formId, competition, shouldDownloadFiles) {
                         const s3FilePath = `${competition}/application-files/bandName=${fileNameFormattedBandName}/${fullFileNameAfterRename}`;
                         const contentType = fileType === 'jpeg' ? 'image/jpeg' : 'image/png';
                         await downloadFromJotformAndWriteToS3(fullFileNameAfterRename, bandLogoUrl, fileType, s3FilePath, contentType);
-                        allFiles.push(getUploadedFile(fullFileNameAfterRename, fileType, 'logo', bandLogoUrl, app.bandName));
+                        allFiles.push(getUploadedFile(fullFileNameAfterRename, fileType, 'logo', bandLogoUrl, app.bandName, contentType));
                         console.log(`done with logo ${s3FilePath}`)
                     } catch (e) {
                         console.error('Error with logo: ', e);
@@ -113,8 +114,9 @@ async function getFormFiles(formId, competition, shouldDownloadFiles) {
                         const fileType = getFileType(bandPhotoUrl);
                         const fileName = `${fileNameFormattedBandName}_Photo-${index + 1}.${fileType}`;
                         const s3FilePath = `${filePathForBand}${fileName}`;
-                        await downloadFromJotformAndWriteToS3(fileName, bandPhotoUrl, s3FilePath, `image/${fileType}`);
-                        allFiles.push(getUploadedFile(fileName, fileType, 'band_photo', bandPhotoUrl, app.bandName));
+                        const contentType = `image/${fileType}`;
+                        await downloadFromJotformAndWriteToS3(fileName, bandPhotoUrl, s3FilePath, contentType);
+                        allFiles.push(getUploadedFile(fileName, fileType, 'band_photo', bandPhotoUrl, app.bandName, contentType));
                         console.log(`done with photo ${s3FilePath}`);
                     } catch (e) {
                         console.error('Error with photo: ', e);
@@ -131,7 +133,7 @@ async function getFormFiles(formId, competition, shouldDownloadFiles) {
                         const s3FilePath = `${filePathForBand}${fileName}`;
                         const contentType = fileType === 'mp3' ? 'audio/mpeg' : `audio/${fileType}`;
                         await downloadFromJotformAndWriteToS3(fileName, musicSamplesUrl, fileType, s3FilePath, contentType)
-                        allFiles.push(getUploadedFile(fileName, fileType, 'music', musicSamplesUrl, app.bandName, songName));
+                        allFiles.push(getUploadedFile(fileName, fileType, 'music', musicSamplesUrl, app.bandName, contentType, songName));
                         console.log(`done with song ${s3FilePath}`)
                     } catch (e) {
                         console.error('Error with song: ', e);
@@ -144,8 +146,9 @@ async function getFormFiles(formId, competition, shouldDownloadFiles) {
                         const fileType = getFileType(stagePlotUrl);
                         const fileName = `${fileNameFormattedBandName}_Stage-Plot-${index + 1}.${fileType}`;
                         const s3FilePath = `${filePathForBand}${fileName}`;
-                        await downloadFromJotformAndWriteToS3(fileName, fileType, stagePlotUrl, s3FilePath, `image/${fileType}`);
-                        allFiles.push(getUploadedFile(fileName, fileType, 'stage_plot', stagePlotUrl, app.bandName));
+                        const contentType = `image/${fileType}`;
+                        await downloadFromJotformAndWriteToS3(fileName, fileType, stagePlotUrl, s3FilePath, contentType);
+                        allFiles.push(getUploadedFile(fileName, fileType, 'stage_plot', stagePlotUrl, app.bandName, contentType));
                         console.log(`done with stage plot ${s3FilePath}`)
                     } catch (e) {
                         console.error('Error with stage plot: ', e);
