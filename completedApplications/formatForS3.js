@@ -12,7 +12,7 @@ const jotformAnswerMap = {
     referencedBands: '303'
 };
 
-const format = (applications) => {
+const format = (applications, jotformId) => {
 
     const convertIsBandAvailableOnFridays = (isBandAvailableStringField) => {
         return !isBandAvailableStringField.toLowerCase().includes('not available');
@@ -40,7 +40,8 @@ const format = (applications) => {
     });
 
     return {
-        completedApplications: cleanedApplications
+        completedApplications: cleanedApplications,
+        jotformId
     };
 };
 
