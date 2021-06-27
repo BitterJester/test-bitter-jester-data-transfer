@@ -39,14 +39,19 @@ function generateFridayNightBattleSchedule(completedApplications) {
     ];
 
     for (let night of nights) {
-        while (night.bands.length > 6) {
             const deepCopyBands = _.cloneDeep(night.bands);
-            for(let band of deepCopyBands){
-                const nightNumber = Object.values(NIGHT_MAP).indexOf(band.secondChoiceFridayNight) + 1;
-                const secondChoiceNight = nights.find(night => night.night === nightNumber);
-                if(secondChoiceNight.length < 6){
-                    const bandToAdd = night.bands.splice(nightNumber - 1, 1);
-                    night[nightNumber - 1].bands.push(bandToAdd[0]);
+            for (let band of deepCopyBands) {
+                if(night.bands.length <= 6) {
+                    continue;
+                }
+                if (band.secondChoiceFridayNight !== '' && band.secondChoiceFridayNight !== undefined) {
+                    const nightNumber = Object.values(NIGHT_MAP).indexOf(band.secondChoiceFridayNight) + 1;
+                    console.error(nightNumber);
+                    const secondChoiceNight = nights.find(night => night.night === nightNumber);
+                    if (secondChoiceNight.length < 6) {
+                        const bandToAdd = night.bands.splice(nightNumber - 1, 1);
+                        night[nightNumber - 1].bands.push(bandToAdd[0]);
+                    }
                 }
             }
         }
