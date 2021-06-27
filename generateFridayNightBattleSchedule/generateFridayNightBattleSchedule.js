@@ -45,7 +45,7 @@ function generateFridayNightBattleSchedule(completedApplications) {
                 continue;
             }
             if (band.secondChoiceFridayNight !== '' && band.secondChoiceFridayNight !== undefined) {
-                const nightNumber = Object.values(NIGHT_MAP).findIndex((i) => band.secondChoiceFridayNight.includes(i));
+                const nightNumber = Object.values(NIGHT_MAP).findIndex((i) => band.secondChoiceFridayNight.includes(i)) + 1;
                 console.error(nightNumber);
                 const secondChoiceNight = nights.find(night => night.night === nightNumber);
                 if (secondChoiceNight.length < 6) {
