@@ -48,7 +48,8 @@ function generateFridayNightBattleSchedule(completedApplications) {
                 const nightNumber = Object.values(NIGHT_MAP).findIndex((i) => band.secondChoiceFridayNight.includes(i)) + 1;
                 console.error(nightNumber);
                 const secondChoiceNight = nights.find(night => night.night === nightNumber);
-                if (secondChoiceNight.length < 6) {
+                console.error(secondChoiceNight);
+                if (secondChoiceNight.bands.length < 6) {
                     const bandToAdd = night.bands.splice(nightNumber - 1, 1);
                     night[nightNumber - 1].bands.push(bandToAdd[0]);
                 }
