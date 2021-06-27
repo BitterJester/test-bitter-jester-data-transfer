@@ -13,10 +13,10 @@ function generateFridayNightBattleSchedule(completedApplications) {
     const firstChoiceNightFour = getAvailableBandsForNight('13');
 
     const NIGHT_MAP = {
-        1: 'Friday, July 23, 2021',
-        2: 'Friday, July 30, 2021',
-        3: 'Friday, August 6, 2021',
-        4: 'Friday, August 13, 2021'
+        1: '23',
+        2: '30',
+        3: '6',
+        4: '13'
     }
 
     const nights = [
@@ -45,7 +45,7 @@ function generateFridayNightBattleSchedule(completedApplications) {
                 continue;
             }
             if (band.secondChoiceFridayNight !== '' && band.secondChoiceFridayNight !== undefined) {
-                const nightNumber = Object.values(NIGHT_MAP).indexOf(band.secondChoiceFridayNight) + 1;
+                const nightNumber = Object.values(NIGHT_MAP).findIndex((i) => band.secondChoiceFridayNight.includes(i));
                 console.error(nightNumber);
                 const secondChoiceNight = nights.find(night => night.night === nightNumber);
                 if (secondChoiceNight.length < 6) {
