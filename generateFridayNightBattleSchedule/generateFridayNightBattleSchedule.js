@@ -51,7 +51,8 @@ function generateFridayNightBattleSchedule(completedApplications) {
                 console.error(secondChoiceNight);
                 if (secondChoiceNight.bands.length < 6) {
                     const bandToAdd = night.bands.splice(nightNumber - 1, 1);
-                    night[nightNumber - 1].bands.push(bandToAdd[0]);
+                    console.error('bandToAdd: ', bandToAdd);
+                    nights[nightNumber - 1].bands.push(bandToAdd[0]);
                 }
             }
         }
