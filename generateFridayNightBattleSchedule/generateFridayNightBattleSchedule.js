@@ -38,6 +38,7 @@ function generateFridayNightBattleSchedule(completedApplications) {
         }
     ];
     console.error(nights);
+    // Pass 1 - Move some first choices to second choices
     for (let night of nights) {
         const deepCopyBands = _.cloneDeep(night.bands);
         let bandIndex = 0;
@@ -46,9 +47,8 @@ function generateFridayNightBattleSchedule(completedApplications) {
                 bandIndex++;
                 continue;
             }
-            if (band.secondChoiceFridayNight !== '' && band.secondChoiceFridayNight !== undefined) {
+            if (band.secondChoiceFridayNight !== '' && band.secondChoiceFridayNight !== undefined && band.firstChoiceFridayNight !== band.secondChoiceFridayNight) {
                 const secondChoiceFridayNightNumber = Object.values(NIGHT_MAP).findIndex((i) => band.secondChoiceFridayNight.includes(i)) + 1;
-                console.error(secondChoiceFridayNightNumber);
                 const secondChoiceNight = nights.find(night => night.night === secondChoiceFridayNightNumber);
                 if (secondChoiceNight.bands.length < 6) {
                     const bandToAdd = night.bands.splice(bandIndex, 1);
@@ -57,6 +57,11 @@ function generateFridayNightBattleSchedule(completedApplications) {
             }
             bandIndex++;
         }
+    }
+
+    // Pass 2 - Ensure no bands are on an unavailable night
+    for(let night of nights) {
+
     }
 
     const schedule = {
