@@ -57,7 +57,7 @@ function generateFridayNightBattleSchedule(completedApplications) {
                 const secondChoiceNight = nights.find(night => night.night === secondChoiceFridayNightNumber);
                 console.error(`BandsScheduledOnSecondChoice: ${secondChoiceNight.bands.length}; FirstNight: ${band.firstChoiceFridayNight}; SecondNight: ${band.secondChoiceFridayNight}`);
                 if (secondChoiceNight.bands.length < 6) {
-                    const bandToAdd = nights[night.night].bands.splice(bandIndex, 1);
+                    const bandToAdd = nights[night.night - 1].bands.splice(bandIndex, 1);
                     console.error('BandToMove: ', JSON.stringify(bandToAdd));
                     nights[secondChoiceFridayNightNumber - 1].bands.push(bandToAdd[0]);
                 }
