@@ -44,7 +44,7 @@ function generateFridayNightBattleSchedule(completedApplications) {
         let bandIndex = 0;
         console.error(`Starting pass for night ${night.night}`);
         console.error(`StartingBandsOnNight: ${night.bands.length}`);
-        if(night.bands.length < 6){
+        if(night.bands.length <= 6){
             console.error(`${night.night} is not over scheduled so continuing.`);
             continue;
         }
