@@ -37,24 +37,25 @@ function generateFridayNightBattleSchedule(completedApplications) {
             night: 4
         }
     ];
-
+    console.error(nights);
     for (let night of nights) {
         const deepCopyBands = _.cloneDeep(night.bands);
+        let bandIndex = 0;
         for (let band of deepCopyBands) {
             if (night.bands.length <= 6) {
+                bandIndex++;
                 continue;
             }
             if (band.secondChoiceFridayNight !== '' && band.secondChoiceFridayNight !== undefined) {
-                const nightNumber = Object.values(NIGHT_MAP).findIndex((i) => band.secondChoiceFridayNight.includes(i)) + 1;
-                console.error(nightNumber);
-                const secondChoiceNight = nights.find(night => night.night === nightNumber);
-                console.error(secondChoiceNight);
+                const secondChoiceFridayNightNumber = Object.values(NIGHT_MAP).findIndex((i) => band.secondChoiceFridayNight.includes(i)) + 1;
+                console.error(secondChoiceFridayNightNumber);
+                const secondChoiceNight = nights.find(night => night.night === secondChoiceFridayNightNumber);
                 if (secondChoiceNight.bands.length < 6) {
-                    const bandToAdd = night.bands.splice(nightNumber - 1, 1);
-                    console.error('bandToAdd: ', bandToAdd);
-                    nights[nightNumber - 1].bands.push(bandToAdd[0]);
+                    const bandToAdd = night.bands.splice(bandIndex, 1);
+                    nights[secondChoiceFridayNightNumber - 1].bands.push(bandToAdd[0]);
                 }
             }
+            bandIndex++;
         }
     }
 
