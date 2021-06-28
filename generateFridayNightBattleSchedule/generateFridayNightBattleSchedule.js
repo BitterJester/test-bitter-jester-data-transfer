@@ -41,7 +41,6 @@ function generateFridayNightBattleSchedule(completedApplications) {
     // Pass 1 - Move some first choices to second choices
     for (let night of nights) {
         const deepCopyBands = _.cloneDeep(night.bands);
-        let bandIndex = 0;
         console.error(`Starting pass for night ${night.night}`);
         console.error(`StartingBandsOnNight: ${night.bands.length}`);
         if(night.bands.length <= 6){
@@ -57,12 +56,12 @@ function generateFridayNightBattleSchedule(completedApplications) {
                 const secondChoiceNight = nights.find(night => night.night === secondChoiceFridayNightNumber);
                 console.error(`BandsScheduledOnSecondChoice: ${secondChoiceNight.bands.length}; FirstNight: ${band.firstChoiceFridayNight}; SecondNight: ${band.secondChoiceFridayNight}`);
                 if (secondChoiceNight.bands.length < 6) {
-                    const bandToAdd = nights[night.night - 1].bands.splice(bandIndex, 1);
+                    const indexOfBand = nights[night.night - 1].bands.findIndex((fi) => fi.bandName = band.bandName);
+                    const bandToAdd = nights[night.night - 1].bands.splice(indexOfBand, 1);
                     console.error('BandToMove: ', JSON.stringify(bandToAdd));
                     nights[secondChoiceFridayNightNumber - 1].bands.push(bandToAdd[0]);
                 }
             }
-            bandIndex++;
             if(night.bands.length === 6){
                 console.error('Second choice night is full');
                 break;
