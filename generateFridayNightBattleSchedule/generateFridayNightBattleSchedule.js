@@ -47,6 +47,8 @@ function generateFridayNightBattleSchedule(completedApplications) {
                 bandIndex++;
                 continue;
             }
+            console.error(`BandName: ${band.bandName}`);
+            console.error(`PreviouslyScheduledNight: ${night.night}`);
             if (band.secondChoiceFridayNight !== '' && band.secondChoiceFridayNight !== undefined && band.firstChoiceFridayNight !== band.secondChoiceFridayNight) {
                 const secondChoiceFridayNightNumber = Object.values(NIGHT_MAP).findIndex((i) => band.secondChoiceFridayNight.includes(i)) + 1;
                 const secondChoiceNight = nights.find(night => night.night === secondChoiceFridayNightNumber);
@@ -59,28 +61,23 @@ function generateFridayNightBattleSchedule(completedApplications) {
         }
     }
 
-    // Pass 2 - Ensure no bands are on an unavailable night
-    for(let night of nights) {
-
-    }
+    // // Pass 2 - Ensure no bands are on an unavailable night
+    // for(let night of nights) {
+    //     const deepCopyBands = _.cloneDeep(night.bands);
+    //     let bandIndex = 0;
+    //     for(let band of deepCopyBands){
+    //         const dateOfFridayNight = NIGHT_MAP[night.night];
+    //         if(band.unavailableFridayNights.includes(dateOfFridayNight)) {
+    //             const bandToMove = night.bands.splice(bandIndex, 1);
+    //         }
+    //     }
+    // }
 
     const schedule = {
-        fridayNightOne: {
-            bands: firstChoiceNightOne,
-            night: 1
-        },
-        fridayNightTwo: {
-            bands: firstChoiceNightTwo,
-            night: 2
-        },
-        fridayNightThree: {
-            bands: firstChoiceNightThree,
-            night: 3
-        },
-        fridayNightFour: {
-            bands: firstChoiceNightFour,
-            night: 4
-        },
+        fridayNightOne: nights[0],
+        fridayNightTwo: nights[1],
+        fridayNightThree: nights[2],
+        fridayNightFour: nights[3],
         nights,
         version: 'suggested'
     };
