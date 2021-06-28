@@ -42,22 +42,28 @@ function generateFridayNightBattleSchedule(completedApplications) {
     for (let night of nights) {
         const deepCopyBands = _.cloneDeep(night.bands);
         let bandIndex = 0;
+
+        if(night.bands.length < 6){
+            continue;
+        }
+
         for (let band of deepCopyBands) {
-            if (night.bands.length <= 6) {
-                bandIndex++;
-                continue;
-            }
             console.error(`BandName: ${band.bandName}`);
             console.error(`PreviouslyScheduledNight: ${night.night}`);
             if (band.secondChoiceFridayNight !== '' && band.secondChoiceFridayNight !== undefined && band.firstChoiceFridayNight !== band.secondChoiceFridayNight) {
                 const secondChoiceFridayNightNumber = Object.values(NIGHT_MAP).findIndex((i) => band.secondChoiceFridayNight.includes(i)) + 1;
                 const secondChoiceNight = nights.find(night => night.night === secondChoiceFridayNightNumber);
+                console.error(`BandsScheduledOnSecondChoice: ${secondChoiceNight.bands.length}`);
                 if (secondChoiceNight.bands.length < 6) {
                     const bandToAdd = night.bands.splice(bandIndex, 1);
                     nights[secondChoiceFridayNightNumber - 1].bands.push(bandToAdd[0]);
                 }
             }
             bandIndex++;
+            if(night.bands.length === 6){
+                console.error('Second choice night is full');
+                break;
+            }
         }
     }
 
