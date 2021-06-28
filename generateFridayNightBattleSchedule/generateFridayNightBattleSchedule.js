@@ -42,7 +42,8 @@ function generateFridayNightBattleSchedule(completedApplications) {
     for (let night of nights) {
         const deepCopyBands = _.cloneDeep(night.bands);
         let bandIndex = 0;
-
+        console.error(`Starting pass for night ${night.night}`);
+        console.error(`StartingBandsOnNight: ${night.bands.length}`);
         if(night.bands.length < 6){
             console.error(`${night.night} is not over scheduled so continuing.`);
             continue;
@@ -56,7 +57,8 @@ function generateFridayNightBattleSchedule(completedApplications) {
                 const secondChoiceNight = nights.find(night => night.night === secondChoiceFridayNightNumber);
                 console.error(`BandsScheduledOnSecondChoice: ${secondChoiceNight.bands.length}; FirstNight: ${band.firstChoiceFridayNight}; SecondNight: ${band.secondChoiceFridayNight}`);
                 if (secondChoiceNight.bands.length < 6) {
-                    const bandToAdd = night.bands.splice(bandIndex, 1);
+                    const bandToAdd = nights[night.night].bands.splice(bandIndex, 1);
+                    console.error('BandToMove: ', JSON.stringify(bandToAdd));
                     nights[secondChoiceFridayNightNumber - 1].bands.push(bandToAdd[0]);
                 }
             }
