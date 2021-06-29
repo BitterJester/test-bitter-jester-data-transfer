@@ -325,3 +325,130 @@ Resources:
       Subscription:
         - Endpoint: !GetAtt AggregateCommentsForWeek.Arn
           Protocol: "lambda"
+  BitterJesterDataManagerApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      ApiKeySourceType: HEADER
+      Description: API for Bitter Jester Data Manager
+      Name: bitter-jester-data-manager-api
+  BitterJesterDataManagerResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt BitterJesterDataManagerApi.RootResourceId
+      PathPart: '{competitionId}'
+      RestApiId: !Ref BitterJesterDataManagerApi
+  ApiGatewayModel:
+    Type: AWS::ApiGateway::Model
+    Properties:
+      ContentType: 'application/json'
+      RestApiId: !Ref BitterJesterDataManagerApi
+      Schema: { }
+  ApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: ApiGatewayMethod
+    Properties:
+      Description: Bitter Jester Data Manager API Deployment
+      RestApiId: !Ref BitterJesterDataManagerApi
+  ApiGatewayStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref ApiGatewayDeployment
+      Description: Prod API Stage
+      RestApiId: !Ref BitterJesterDataManagerApi
+      StageName: prod
+  ApiGatewayIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: ''
+            Effect: 'Allow'
+            Principal:
+              Service:
+                - 'apigateway.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Path: '/'
+  ApiGatewayPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: "LambdaAccess"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: 'Allow'
+            Action: 'lambda:*'
+            Resource: !GetAtt UpdateCompetitionScheduleFunction.Arn
+      Roles:
+        - !Ref ApiGatewayIamRole
+  LambdaApiGatewayInvoke:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !GetAtt "UpdateCompetitionScheduleFunction.Arn"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${BitterJesterDataManagerApi}/*/*
+  UpdateCompetitionScheduleFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: UpdateCompetitionScheduleFunction
+      Code:
+        S3Bucket: "bitter-jester-test"
+        S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
+      Handler: "updateCompetitionScheduleFunction.handler"
+      Runtime: "nodejs12.x"
+      Role: !GetAtt LambdaBasicAccessRole.Arn
+      Timeout: 60
+  UpdateCompetitionScheduleGatewayMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: GET
+      RequestParameters:
+        method.request.path.competitionId: true
+      Integration:
+        Credentials: !GetAtt ApiGatewayIamRole.Arn
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - ResponseTemplates: { "application/json": "" }
+            ResponseParameters:
+              method.response.header.X-Requested-With: "'*'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,x-requested-with'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            StatusCode: 200
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          application/json: "{ \"competitionId\": \"$input.params('competitionId')\"}"
+        TimeoutInMillis: 29000
+        Type: AWS
+        Uri: !Sub
+          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations'
+          - lambdaArn: !GetAtt "UpdateCompetitionScheduleFunction.Arn"
+      MethodResponses:
+        - ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.X-Requested-With: false
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+          StatusCode: 200
+      OperationName: 'update competition schedule'
+      ResourceId: !Ref ApiGatewayResource
+      RestApiId: !Ref BitterJesterDataManagerApi
+Outputs:
+  BitterJesterDataManagerApi:
+    Description: "API Gateway endpoint URL for Prod stage for Update Schedule Function"
+    Value: !Sub "https://${BitterJesterDataManagerApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiGatewayStage}/{competitionId}"
+  UpdateCompetitionScheduleFunction:
+    Description: "Update Competition Schedule Function ARN"
+    Value: !GetAtt UpdateCompetitionScheduleFunction.Arn
+  LambdaBasicAccessRole:
+    Description: "IAM Role created for Lambda"
+    Value: !GetAtt LambdaBasicAccessRole.Arn
+  ApiGatewayIamRole:
+    Description: "IAM Role created for API Gateway"
+    Value: !GetAtt ApiGatewayIamRole.Arn
