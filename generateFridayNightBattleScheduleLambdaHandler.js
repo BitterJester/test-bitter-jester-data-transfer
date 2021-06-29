@@ -19,7 +19,7 @@ exports.handler = async function (event, context) {
             JSON.stringify(schedule)
         );
         await s3Client.put(s3PutRequest);
-        return JSON.stringify({responseCode: 200, body: schedule});
+        return {responseCode: 200, body: schedule};
     } catch (e) {
         return e;
     }
