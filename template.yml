@@ -345,7 +345,7 @@ Resources:
       Schema: { }
   ApiGatewayDeployment:
     Type: AWS::ApiGateway::Deployment
-    DependsOn: ApiGatewayMethod
+    DependsOn: UpdateCompetitionScheduleGatewayMethod
     Properties:
       Description: Bitter Jester Data Manager API Deployment
       RestApiId: !Ref BitterJesterDataManagerApi
