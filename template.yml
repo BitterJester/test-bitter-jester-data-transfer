@@ -340,13 +340,13 @@ Resources:
   UpdateCompetitionScheduleResource:
     Type: AWS::ApiGateway::Resource
     Properties:
-      ParentId: !GetAtt CompetitionIdPathResource.Arn
+      ParentId: CompetitionIdPathResource
       PathPart: 'update-schedule'
       RestApiId: !Ref BitterJesterDataManagerApi
   CompletedSubmissionsResource:
     Type: AWS::ApiGateway::Resource
     Properties:
-      ParentId: !GetAtt CompetitionIdPathResource.Arn
+      ParentId: CompetitionIdPathResource
       PathPart: 'completed-submissions'
       RestApiId: !Ref BitterJesterDataManagerApi
   ApiGatewayModel:
