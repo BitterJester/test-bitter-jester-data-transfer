@@ -437,7 +437,7 @@ Resources:
             method.response.header.Access-Control-Allow-Origin: false
           StatusCode: 200
       OperationName: 'update competition schedule'
-      ResourceId: !Ref ApiGatewayResource
+      ResourceId: !Ref BitterJesterDataManagerResource
       RestApiId: !Ref BitterJesterDataManagerApi
 Outputs:
   BitterJesterDataManagerApi:
