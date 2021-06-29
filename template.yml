@@ -331,11 +331,23 @@ Resources:
       ApiKeySourceType: HEADER
       Description: API for Bitter Jester Data Manager
       Name: bitter-jester-data-manager-api
-  BitterJesterDataManagerResource:
+  CompetitionIdPathResource:
     Type: AWS::ApiGateway::Resource
     Properties:
       ParentId: !GetAtt BitterJesterDataManagerApi.RootResourceId
       PathPart: '{competitionId}'
+      RestApiId: !Ref BitterJesterDataManagerApi
+  UpdateCompetitionScheduleResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt BitterJesterDataManagerApi.CompetitionIdPathResource
+      PathPart: 'update-schedule'
+      RestApiId: !Ref BitterJesterDataManagerApi
+  CompletedSubmissionsResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt BitterJesterDataManagerApi.CompetitionIdPathResource
+      PathPart: 'completed-submissions'
       RestApiId: !Ref BitterJesterDataManagerApi
   ApiGatewayModel:
     Type: AWS::ApiGateway::Model
@@ -380,6 +392,9 @@ Resources:
           - Effect: 'Allow'
             Action: 'lambda:*'
             Resource: !GetAtt GenerateFridayNightBattleSchedule.Arn
+          - Effect: 'Allow'
+            Action: 'lambda:*'
+            Resource: !GetAtt WriteToS3FromJotForm.Arn
       Roles:
         - !Ref ApiGatewayIamRole
   LambdaApiGatewayInvoke:
@@ -387,6 +402,13 @@ Resources:
     Properties:
       Action: "lambda:InvokeFunction"
       FunctionName: !GetAtt "GenerateFridayNightBattleSchedule.Arn"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${BitterJesterDataManagerApi}/*/*
+  LambdaApiGatewayInvokeCompletedSubmissions:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !GetAtt "WriteToS3FromJotForm.Arn"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${BitterJesterDataManagerApi}/*/*
   UpdateCompetitionScheduleGatewayMethod:
@@ -426,7 +448,46 @@ Resources:
             method.response.header.Access-Control-Allow-Origin: false
           StatusCode: 200
       OperationName: 'update competition schedule'
-      ResourceId: !Ref BitterJesterDataManagerResource
+      ResourceId: !Ref UpdateCompetitionScheduleResource
+      RestApiId: !Ref BitterJesterDataManagerApi
+WriteToS3FromJotFormGatewayMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: GET
+      RequestParameters:
+        method.request.path.competitionId: true
+      Integration:
+        Credentials: !GetAtt ApiGatewayIamRole.Arn
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - ResponseTemplates: { "application/json": "" }
+            ResponseParameters:
+              method.response.header.X-Requested-With: "'*'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,x-requested-with'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            StatusCode: 200
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          application/json: "{ \"competitionId\": \"$input.params('competitionId')\"}"
+        TimeoutInMillis: 29000
+        Type: AWS
+        Uri: !Sub
+          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations'
+          - lambdaArn: !GetAtt "WriteToS3FromJotForm.Arn"
+      MethodResponses:
+        - ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.X-Requested-With: false
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+          StatusCode: 200
+      OperationName: 'get updated completed submissions'
+      ResourceId: !Ref CompletedSubmissionsResource
       RestApiId: !Ref BitterJesterDataManagerApi
 Outputs:
   BitterJesterDataManagerApi:
