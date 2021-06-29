@@ -326,6 +326,7 @@ Resources:
         - Endpoint: !GetAtt AggregateCommentsForWeek.Arn
           Protocol: "lambda"
   BitterJesterDataManagerApi:
+    Name: BitterJesterDataManagerApi
     Type: AWS::ApiGateway::RestApi
     Properties:
       ApiKeySourceType: HEADER
