@@ -450,7 +450,7 @@ Resources:
       OperationName: 'update competition schedule'
       ResourceId: !Ref UpdateCompetitionScheduleResource
       RestApiId: !Ref BitterJesterDataManagerApi
-WriteToS3FromJotFormGatewayMethod:
+  WriteToS3FromJotFormGatewayMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       ApiKeyRequired: false
@@ -490,9 +490,15 @@ WriteToS3FromJotFormGatewayMethod:
       ResourceId: !Ref CompletedSubmissionsResource
       RestApiId: !Ref BitterJesterDataManagerApi
 Outputs:
-  BitterJesterDataManagerApi:
+  MainEndpoint:
     Description: "API Gateway endpoint URL for Prod stage for Update Schedule Function"
     Value: !Sub "https://${BitterJesterDataManagerApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiGatewayStage}/{competitionId}"
+  GetCompletedSubmissionsEndpoint:
+    Description: "API Gateway endpoint URL for Prod stage for Completed Submissions Function"
+    Value: !Sub "https://${BitterJesterDataManagerApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiGatewayStage}/{competitionId}/completed-submissions"
+  UpdateCompetitionScheduleEndpoint:
+    Description: "API Gateway endpoint URL for Prod stage for Update Schedule Function"
+    Value: !Sub "https://${BitterJesterDataManagerApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiGatewayStage}/{competitionId}/update-schedule"
   UpdateCompetitionScheduleFunction:
     Description: "Update Competition Schedule Function ARN"
     Value: !GetAtt GenerateFridayNightBattleSchedule.Arn
