@@ -396,7 +396,7 @@ Resources:
       Code:
         S3Bucket: "bitter-jester-test"
         S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
-      Handler: "updateCompetitionScheduleFunction.handler"
+      Handler: "updateCompetitionScheduleLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
       Timeout: 60
