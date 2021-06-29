@@ -379,27 +379,16 @@ Resources:
         Statement:
           - Effect: 'Allow'
             Action: 'lambda:*'
-            Resource: !GetAtt UpdateCompetitionScheduleFunction.Arn
+            Resource: !GetAtt GenerateFridayNightBattleSchedule.Arn
       Roles:
         - !Ref ApiGatewayIamRole
   LambdaApiGatewayInvoke:
     Type: "AWS::Lambda::Permission"
     Properties:
       Action: "lambda:InvokeFunction"
-      FunctionName: !GetAtt "UpdateCompetitionScheduleFunction.Arn"
+      FunctionName: !GetAtt "GenerateFridayNightBattleSchedule.Arn"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${BitterJesterDataManagerApi}/*/*
-  UpdateCompetitionScheduleFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: UpdateCompetitionScheduleFunction
-      Code:
-        S3Bucket: "bitter-jester-test"
-        S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
-      Handler: "updateCompetitionScheduleLambdaHandler.handler"
-      Runtime: "nodejs12.x"
-      Role: !GetAtt LambdaBasicAccessRole.Arn
-      Timeout: 60
   UpdateCompetitionScheduleGatewayMethod:
     Type: AWS::ApiGateway::Method
     Properties:
@@ -426,7 +415,7 @@ Resources:
         Type: AWS
         Uri: !Sub
           - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations'
-          - lambdaArn: !GetAtt "UpdateCompetitionScheduleFunction.Arn"
+          - lambdaArn: !GetAtt "GenerateFridayNightBattleSchedule.Arn"
       MethodResponses:
         - ResponseModels:
             application/json: 'Empty'
@@ -445,7 +434,7 @@ Outputs:
     Value: !Sub "https://${BitterJesterDataManagerApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiGatewayStage}/{competitionId}"
   UpdateCompetitionScheduleFunction:
     Description: "Update Competition Schedule Function ARN"
-    Value: !GetAtt UpdateCompetitionScheduleFunction.Arn
+    Value: !GetAtt GenerateFridayNightBattleSchedule.Arn
   LambdaBasicAccessRole:
     Description: "IAM Role created for Lambda"
     Value: !GetAtt LambdaBasicAccessRole.Arn
