@@ -352,6 +352,13 @@ Resources:
         Ref: CompetitionIdPathResource
       PathPart: 'completed-submissions'
       RestApiId: !Ref BitterJesterDataManagerApi
+  GetRenamedFilesFromCompletedSubmissionsResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Ref: CompetitionIdPathResource
+      PathPart: 'renamed-files'
+      RestApiId: !Ref BitterJesterDataManagerApi
   ApiGatewayModel:
     Type: AWS::ApiGateway::Model
     Properties:
@@ -398,6 +405,9 @@ Resources:
           - Effect: 'Allow'
             Action: 'lambda:*'
             Resource: !GetAtt WriteToS3FromJotForm.Arn
+          - Effect: 'Allow'
+            Action: 'lambda:*'
+            Resource: !GetAtt RenameFilesFromCompletedSubmissions.Arn
       Roles:
         - !Ref ApiGatewayIamRole
   LambdaApiGatewayInvoke:
@@ -412,6 +422,13 @@ Resources:
     Properties:
       Action: "lambda:InvokeFunction"
       FunctionName: !GetAtt "WriteToS3FromJotForm.Arn"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${BitterJesterDataManagerApi}/*/*
+  LambdaApiGatewayInvokeGetRenamedFilesFromCompletedSubmissions:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !GetAtt "RenameFilesFromCompletedSubmissions.Arn"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${BitterJesterDataManagerApi}/*/*
   UpdateCompetitionScheduleGatewayMethod:
@@ -492,6 +509,45 @@ Resources:
       OperationName: 'get updated completed submissions'
       ResourceId: !Ref CompletedSubmissionsResource
       RestApiId: !Ref BitterJesterDataManagerApi
+  GetFilesFromCompletedSubmissionsGatewayMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: GET
+      RequestParameters:
+        method.request.path.competitionId: true
+      Integration:
+        Credentials: !GetAtt ApiGatewayIamRole.Arn
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - ResponseTemplates: { "application/json": "" }
+            ResponseParameters:
+              method.response.header.X-Requested-With: "'*'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,x-requested-with'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            StatusCode: 200
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          application/json: "{ \"competitionId\": \"$input.params('competitionId')\"}"
+        TimeoutInMillis: 29000
+        Type: AWS
+        Uri: !Sub
+          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations'
+          - lambdaArn: !GetAtt "RenameFilesFromCompletedSubmissions.Arn"
+      MethodResponses:
+        - ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+            method.response.header.X-Requested-With: false
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+          StatusCode: 200
+      OperationName: 'get updated completed submissions'
+      ResourceId: !Ref GetRenamedFilesFromCompletedSubmissionsResource
+      RestApiId: !Ref BitterJesterDataManagerApi
 Outputs:
   MainEndpoint:
     Description: "API Gateway endpoint URL for Prod stage for Update Schedule Function"
@@ -502,9 +558,9 @@ Outputs:
   UpdateCompetitionScheduleEndpoint:
     Description: "API Gateway endpoint URL for Prod stage for Update Schedule Function"
     Value: !Sub "https://${BitterJesterDataManagerApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiGatewayStage}/{competitionId}/update-schedule"
-  UpdateCompetitionScheduleFunction:
-    Description: "Update Competition Schedule Function ARN"
-    Value: !GetAtt GenerateFridayNightBattleSchedule.Arn
+  GetRenamedFilesFromCompletedSubmissionsEndpoint:
+    Description: "API Gateway endpoint URL for Prod stage for Rename Files Function"
+    Value: !Sub "https://${BitterJesterDataManagerApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiGatewayStage}/{competitionId}/renamed-files"
   LambdaBasicAccessRole:
     Description: "IAM Role created for Lambda"
     Value: !GetAtt LambdaBasicAccessRole.Arn
