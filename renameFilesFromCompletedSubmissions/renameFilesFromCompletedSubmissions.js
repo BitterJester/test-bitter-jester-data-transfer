@@ -50,6 +50,7 @@ const getUploadedFile = (fileName, fileType, type, url, bandName, contentType, t
 
 async function getFormFiles(formId, competition, shouldDownloadFiles) {
     const ALL_FILES_PATH = `${competition}/application-files/all/`;
+
     async function downloadFromJotformAndWriteToS3(fullFileNameAfterRename, url, fileType, s3FilePath, contentType) {
         if (shouldDownloadFiles) {
             const temporaryFilePath = `${tmpFilePath}${fullFileNameAfterRename}`;
@@ -74,96 +75,92 @@ async function getFormFiles(formId, competition, shouldDownloadFiles) {
         }
     }
 
-    await jotform.getFormSubmissions(formId)
-        .then(async function (applications) {
-            const jotformAnswerMap = {
-                bandLogoUrls: '254',
-                bandPhotosUrls: '253',
-                musicSamplesUrls: '252',
-                musicSampleUrls2: '543',
-                stagePlotUrls: '264',
-                musicSampleTitle1: '544',
-                musicSampleTitle2: '546',
-                bandName: '39',
-            };
+    const applications = await jotform.getFormSubmissions(formId);
+    const jotformAnswerMap = {
+        bandLogoUrls: '254',
+        bandPhotosUrls: '253',
+        musicSamplesUrls: '252',
+        musicSampleUrls2: '543',
+        stagePlotUrls: '264',
+        musicSampleTitle1: '544',
+        musicSampleTitle2: '546',
+        bandName: '39',
+    };
 
-            const uploadedFiles = extractAnswersFromJotform.extractAnswersFromJotform(applications, jotformAnswerMap);
-            console.error(uploadedFiles);
-            const allFiles = [];
-            for (let app of uploadedFiles) {
-                const fileNameFormattedBandName = app.bandName.trim().replace(/[^\w\s&]/gi, '').split(' ').join('-');
-                const filePathForBand = `${competition}/application-files/bandName=${fileNameFormattedBandName}/`;
-                for (let index = 0; index < app.bandLogoUrls.length; index++) {
-                    try {
-                        const bandLogoUrl = app.bandLogoUrls[index];
-                        const fileType = getFileType(bandLogoUrl);
-                        const fullFileNameAfterRename = `${fileNameFormattedBandName}_Logo-${index + 1}.${fileType}`;
-                        const s3FilePath = `${competition}/application-files/bandName=${fileNameFormattedBandName}/${fullFileNameAfterRename}`;
-                        const contentType = fileType === 'jpeg' ? 'image/jpeg' : 'image/png';
-                        await downloadFromJotformAndWriteToS3(fullFileNameAfterRename, bandLogoUrl, fileType, s3FilePath, contentType);
-                        allFiles.push(getUploadedFile(fullFileNameAfterRename, fileType, 'logo', bandLogoUrl, app.bandName, contentType));
-                        console.log(`done with logo ${s3FilePath}`)
-                    } catch (e) {
-                        console.error('Error with logo: ', e);
-                    }
-                }
-
-                for (let index = 0; index < app.bandPhotosUrls.length; index++) {
-                    try {
-                        const bandPhotoUrl = app.bandPhotosUrls[index];
-                        const fileType = getFileType(bandPhotoUrl);
-                        const fileName = `${fileNameFormattedBandName}_Photo-${index + 1}.${fileType}`;
-                        const s3FilePath = `${filePathForBand}${fileName}`;
-                        const contentType = `image/${fileType}`;
-                        await downloadFromJotformAndWriteToS3(fileName, bandPhotoUrl, s3FilePath, contentType);
-                        allFiles.push(getUploadedFile(fileName, fileType, 'band_photo', bandPhotoUrl, app.bandName, contentType));
-                        console.log(`done with photo ${s3FilePath}`);
-                    } catch (e) {
-                        console.error('Error with photo: ', e);
-                    }
-                }
-                const allMusicSampleUrlsForApp = app.musicSampleUrls2 ? [...app.musicSamplesUrls, ...app.musicSampleUrls2] : app.musicSamplesUrls;
-                for (let index = 0; index < allMusicSampleUrlsForApp.length; index++) {
-                    try {
-                        const musicSamplesUrl = allMusicSampleUrlsForApp[index];
-                        const fileType = getFileType(musicSamplesUrl);
-                        const songName = index === 0 ? app.musicSampleTitle1 : app.musicSampleTitle2;
-                        const formattedSongName = songName ? songName.trim().replace(/[^\w\s&]/gi, '').split(' ').join('-') : 'NO-NAME';
-                        const fileName = `${fileNameFormattedBandName}_Music-${index + 1}_${formattedSongName}.${fileType}`;
-                        const s3FilePath = `${filePathForBand}${fileName}`;
-                        const contentType = fileType === 'mp3' ? 'audio/mpeg' : `audio/${fileType}`;
-                        await downloadFromJotformAndWriteToS3(fileName, musicSamplesUrl, fileType, s3FilePath, contentType)
-                        allFiles.push(getUploadedFile(fileName, fileType, 'music', musicSamplesUrl, app.bandName, contentType, songName));
-                        console.log(`done with song ${s3FilePath}`)
-                    } catch (e) {
-                        console.error('Error with song: ', e);
-                    }
-                }
-
-                for (let index = 0; index < app.stagePlotUrls.length; index++) {
-                    try {
-                        const stagePlotUrl = app.stagePlotUrls[index];
-                        const fileType = getFileType(stagePlotUrl);
-                        const fileName = `${fileNameFormattedBandName}_Stage-Plot-${index + 1}.${fileType}`;
-                        const s3FilePath = `${filePathForBand}${fileName}`;
-                        const contentType = `image/${fileType}`;
-                        await downloadFromJotformAndWriteToS3(fileName, fileType, stagePlotUrl, s3FilePath, contentType);
-                        allFiles.push(getUploadedFile(fileName, fileType, 'stage_plot', stagePlotUrl, app.bandName, contentType));
-                        console.log(`done with stage plot ${s3FilePath}`)
-                    } catch (e) {
-                        console.error('Error with stage plot: ', e);
-                    }
-                }
-                await s3Client.put(s3Client.createPutPublicJsonRequest(
-                    'bitter-jester-test',
-                    `${competition}/uploaded-files.json`,
-                    JSON.stringify({files: allFiles}),
-                ));
+    const uploadedFiles = extractAnswersFromJotform.extractAnswersFromJotform(applications, jotformAnswerMap);
+    console.error(uploadedFiles);
+    const allFiles = [];
+    for (let app of uploadedFiles) {
+        const fileNameFormattedBandName = app.bandName.trim().replace(/[^\w\s&]/gi, '').split(' ').join('-');
+        const filePathForBand = `${competition}/application-files/bandName=${fileNameFormattedBandName}/`;
+        for (let index = 0; index < app.bandLogoUrls.length; index++) {
+            try {
+                const bandLogoUrl = app.bandLogoUrls[index];
+                const fileType = getFileType(bandLogoUrl);
+                const fullFileNameAfterRename = `${fileNameFormattedBandName}_Logo-${index + 1}.${fileType}`;
+                const s3FilePath = `${competition}/application-files/bandName=${fileNameFormattedBandName}/${fullFileNameAfterRename}`;
+                const contentType = fileType === 'jpeg' ? 'image/jpeg' : 'image/png';
+                await downloadFromJotformAndWriteToS3(fullFileNameAfterRename, bandLogoUrl, fileType, s3FilePath, contentType);
+                allFiles.push(getUploadedFile(fullFileNameAfterRename, fileType, 'logo', bandLogoUrl, app.bandName, contentType));
+                console.log(`done with logo ${s3FilePath}`)
+            } catch (e) {
+                console.error('Error with logo: ', e);
             }
-        })
-        .fail(function (error) {
-            console.log(`Error: ${error}`);
-        });
+        }
+
+        for (let index = 0; index < app.bandPhotosUrls.length; index++) {
+            try {
+                const bandPhotoUrl = app.bandPhotosUrls[index];
+                const fileType = getFileType(bandPhotoUrl);
+                const fileName = `${fileNameFormattedBandName}_Photo-${index + 1}.${fileType}`;
+                const s3FilePath = `${filePathForBand}${fileName}`;
+                const contentType = `image/${fileType}`;
+                await downloadFromJotformAndWriteToS3(fileName, bandPhotoUrl, s3FilePath, contentType);
+                allFiles.push(getUploadedFile(fileName, fileType, 'band_photo', bandPhotoUrl, app.bandName, contentType));
+                console.log(`done with photo ${s3FilePath}`);
+            } catch (e) {
+                console.error('Error with photo: ', e);
+            }
+        }
+        const allMusicSampleUrlsForApp = app.musicSampleUrls2 ? [...app.musicSamplesUrls, ...app.musicSampleUrls2] : app.musicSamplesUrls;
+        for (let index = 0; index < allMusicSampleUrlsForApp.length; index++) {
+            try {
+                const musicSamplesUrl = allMusicSampleUrlsForApp[index];
+                const fileType = getFileType(musicSamplesUrl);
+                const songName = index === 0 ? app.musicSampleTitle1 : app.musicSampleTitle2;
+                const formattedSongName = songName ? songName.trim().replace(/[^\w\s&]/gi, '').split(' ').join('-') : 'NO-NAME';
+                const fileName = `${fileNameFormattedBandName}_Music-${index + 1}_${formattedSongName}.${fileType}`;
+                const s3FilePath = `${filePathForBand}${fileName}`;
+                const contentType = fileType === 'mp3' ? 'audio/mpeg' : `audio/${fileType}`;
+                await downloadFromJotformAndWriteToS3(fileName, musicSamplesUrl, fileType, s3FilePath, contentType)
+                allFiles.push(getUploadedFile(fileName, fileType, 'music', musicSamplesUrl, app.bandName, contentType, songName));
+                console.log(`done with song ${s3FilePath}`)
+            } catch (e) {
+                console.error('Error with song: ', e);
+            }
+        }
+
+        for (let index = 0; index < app.stagePlotUrls.length; index++) {
+            try {
+                const stagePlotUrl = app.stagePlotUrls[index];
+                const fileType = getFileType(stagePlotUrl);
+                const fileName = `${fileNameFormattedBandName}_Stage-Plot-${index + 1}.${fileType}`;
+                const s3FilePath = `${filePathForBand}${fileName}`;
+                const contentType = `image/${fileType}`;
+                await downloadFromJotformAndWriteToS3(fileName, fileType, stagePlotUrl, s3FilePath, contentType);
+                allFiles.push(getUploadedFile(fileName, fileType, 'stage_plot', stagePlotUrl, app.bandName, contentType));
+                console.log(`done with stage plot ${s3FilePath}`)
+            } catch (e) {
+                console.error('Error with stage plot: ', e);
+            }
+        }
+        await s3Client.put(s3Client.createPutPublicJsonRequest(
+            'bitter-jester-test',
+            `${competition}/uploaded-files.json`,
+            JSON.stringify({files: allFiles}),
+        ));
+    }
+    return allFiles;
 }
 
 module.exports = {
