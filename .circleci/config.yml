@@ -22,12 +22,11 @@ jobs:
             sudo apt-get install awscli
             aws --version
             sam --version
-      - aws-cli/setup:
-          aws-access-key-id: AWS_ACCESS_ID
-          aws-secret-access-key: AWS_SECRET_KEY
       - run:
           name: Deploy to API and Lambdas
           command: |
+            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_ID
+            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_KEY
             sam package --template-file template.yml --output-template-file packaged.yaml --s3-bucket bitter-jester-test
             aws cloudformation deploy --template-file packaged.yaml --stack-name bitter-jester-data-manager-etl --capabilities CAPABILITY_IAM --parameter-overrides JotformApiKey=${JOTFORM_API_KEY}
 workflows:
