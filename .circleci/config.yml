@@ -5,7 +5,7 @@ orbs:
   sam: circleci/aws-sam-serverless@3.1.0
 jobs:
   build-and-deploy:
-    executor: aws-serverless/default
+    executor: node/default
     steps:
       - checkout
       - sam/install
