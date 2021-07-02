@@ -451,7 +451,7 @@ Resources:
             StatusCode: 200
         PassthroughBehavior: WHEN_NO_TEMPLATES
         RequestTemplates:
-          application/json: "{ \"competitionId\": \"$input.params('competitionId')\"}"
+          application/json: "{ \"competitionId\": \"$input.params('competitionId')\", \"lastSaved\": \"$input.params('lastSaved')\"}"
         TimeoutInMillis: 29000
         Type: AWS
         Uri: !Sub
