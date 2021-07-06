@@ -166,7 +166,6 @@ Resources:
   GetJudgingApplications:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: GetJudgingApplications
       Code:
         S3Bucket: "bitter-jester-test"
         S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"

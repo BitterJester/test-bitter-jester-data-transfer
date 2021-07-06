@@ -27,6 +27,9 @@ jobs:
       - run:
           name: Deploy to API and Lambdas
           command: |
+            rm -rf bitter-jester-data-manager-etl.zip
+            zip -r bitter-jester-data-manager-etl.zip . -x '.idea/**' -x '.git/**'
+            aws s3 cp ./bitter-jester-data-manager-etl.zip "s3://bitter-jester-test/bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
             sam package --template-file template.yml --output-template-file packaged.yaml --s3-bucket bitter-jester-test --force-upload
             aws cloudformation deploy --template-file packaged.yaml --stack-name bitter-jester-data-manager-etl --capabilities CAPABILITY_IAM --parameter-overrides JotformApiKey=${JOTFORM_API_KEY}
 workflows:
