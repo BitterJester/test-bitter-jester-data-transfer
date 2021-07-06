@@ -1,5 +1,7 @@
 const _ = require('lodash');
 
+const MAX_NUMBER_OF_BANDS_PER_NIGHT = 7;
+
 function generateFridayNightBattleSchedule(completedApplications) {
     const getAvailableBandsForNight = (fridayNightChoice) => {
         return completedApplications.filter(app => app.firstChoiceFridayNight.includes(fridayNightChoice));
@@ -43,7 +45,7 @@ function generateFridayNightBattleSchedule(completedApplications) {
         const deepCopyBands = _.cloneDeep(night.bands);
         console.error(`Starting pass for night ${night.night}`);
         console.error(`StartingBandsOnNight: ${night.bands.length}`);
-        if(night.bands.length <= 6){
+        if(night.bands.length <= MAX_NUMBER_OF_BANDS_PER_NIGHT){
             console.error(`${night.night} is not over scheduled so continuing.`);
             continue;
         }
@@ -55,14 +57,14 @@ function generateFridayNightBattleSchedule(completedApplications) {
                 const secondChoiceFridayNightNumber = Object.values(NIGHT_MAP).findIndex((i) => band.secondChoiceFridayNight.includes(i)) + 1;
                 const secondChoiceNight = nights.find(night => night.night === secondChoiceFridayNightNumber);
                 console.error(`BandsScheduledOnSecondChoice: ${secondChoiceNight.bands.length}; FirstNight: ${band.firstChoiceFridayNight}; SecondNight: ${band.secondChoiceFridayNight}`);
-                if (secondChoiceNight.bands.length < 6) {
+                if (secondChoiceNight.bands.length < MAX_NUMBER_OF_BANDS_PER_NIGHT) {
                     const indexOfBand = nights[night.night - 1].bands.findIndex((fi) => fi.bandName === band.bandName);
                     const bandToAdd = nights[night.night - 1].bands.splice(indexOfBand, 1);
                     console.error('BandToMove: ', JSON.stringify(bandToAdd));
                     nights[secondChoiceFridayNightNumber - 1].bands.push(bandToAdd[0]);
                 }
             }
-            if(night.bands.length === 6){
+            if(night.bands.length === MAX_NUMBER_OF_BANDS_PER_NIGHT){
                 console.error('Second choice night is full');
                 break;
             }
