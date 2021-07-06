@@ -26,20 +26,6 @@ async function getFormSubmissions(formId, filename, formatFunction) {
     );
     await s3Client.put(s3PutRequest);
     return formattedResponse;
-    // return jotform.getFormSubmissions(formId, queryParams)
-    //     .then(async function (response) {
-    //         const formattedResponse = await formatFunction(response, formId);
-    //         const s3PutRequest = s3Client.createPutPublicJsonRequest(
-    //             s3Bucket,
-    //             filename,
-    //             JSON.stringify(formattedResponse)
-    //         );
-    //         await s3Client.put(s3PutRequest);
-    //         return formattedResponse;
-    //     })
-    //     .fail(function (error) {
-    //         console.log(`Error: ${error}`);
-    //     });
 }
 
 module.exports = {
