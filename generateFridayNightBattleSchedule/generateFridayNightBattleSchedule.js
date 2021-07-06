@@ -2,17 +2,20 @@ const _ = require('lodash');
 
 const MAX_NUMBER_OF_BANDS_PER_NIGHT = 7;
 
-function generateFridayNightBattleSchedule(completedApplications) {
+function generateFridayNightBattleSchedule(completedApplications, orderedShowcaseBands) {
+    const appsWithoutShowcase = completedApplications.filter(app => !orderedShowcaseBands.includes(app.name));
     const getAvailableBandsForNight = (fridayNightChoice) => {
-        return completedApplications.filter(app => app.firstChoiceFridayNight.includes(fridayNightChoice));
+        return appsWithoutShowcase.filter(app => app.firstChoiceFridayNight.includes(fridayNightChoice));
     };
 
-    const fullyAvailableBands = completedApplications.filter(app => app.isBandAvailableOnAllFridays);
+    const getShowcaseBand = (index) => completedApplications.find(app => app.bandName === orderedShowcaseBands[index]);
 
-    const firstChoiceNightOne = getAvailableBandsForNight('23');
-    const firstChoiceNightTwo = getAvailableBandsForNight('30');
-    const firstChoiceNightThree = getAvailableBandsForNight('6');
-    const firstChoiceNightFour = getAvailableBandsForNight('13');
+    const fullyAvailableBands = appsWithoutShowcase.filter(app => app.isBandAvailableOnAllFridays);
+
+    const firstChoiceNightOne = orderedShowcaseBands.length === 4 ? [getShowcaseBand(0), ...getAvailableBandsForNight('23')] : getAvailableBandsForNight('23');
+    const firstChoiceNightTwo = orderedShowcaseBands.length === 4 ? [getShowcaseBand(1), ...getAvailableBandsForNight('30')] : getAvailableBandsForNight('30');
+    const firstChoiceNightThree = orderedShowcaseBands.length === 4 ? [getShowcaseBand(2), ...getAvailableBandsForNight('6')] : getAvailableBandsForNight('6');
+    const firstChoiceNightFour = orderedShowcaseBands.length === 4 ? [getShowcaseBand(3), ...getAvailableBandsForNight('13')] : getAvailableBandsForNight('13');
 
     const NIGHT_MAP = {
         1: '23',
@@ -53,6 +56,9 @@ function generateFridayNightBattleSchedule(completedApplications) {
         for (let band of deepCopyBands) {
             console.error(`BandName: ${band.bandName}`);
             console.error(`PreviouslyScheduledNight: ${night.night}`);
+            if(orderedShowcaseBands.includes(band.bandName)){
+                continue;
+            }
             if (band.secondChoiceFridayNight !== '' && band.secondChoiceFridayNight !== undefined && band.firstChoiceFridayNight !== band.secondChoiceFridayNight) {
                 const secondChoiceFridayNightNumber = Object.values(NIGHT_MAP).findIndex((i) => band.secondChoiceFridayNight.includes(i)) + 1;
                 const secondChoiceNight = nights.find(night => night.night === secondChoiceFridayNightNumber);

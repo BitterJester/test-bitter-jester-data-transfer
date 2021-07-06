@@ -11,12 +11,13 @@ exports.handler = async function (event, context) {
         const SUGGESTED_SCHEDULE_TYPE = 'friday-night-schedule';
         const LAST_SAVED_SCHEDULE_TYPE = 'user-friday-night-schedule';
         const scheduleType = event.lastSaved ? LAST_SAVED_SCHEDULE_TYPE : SUGGESTED_SCHEDULE_TYPE;
+        const orderedShowcaseBands = event.orderedShowcaseBands ? event.orderedShowcaseBands.split(',') : [];
         if(scheduleType === SUGGESTED_SCHEDULE_TYPE){
             const item = await s3Client.getObject(s3Bucket, `${competition}/completed-submissions.json`);
             const removedBands = await s3Client.getObject(s3Bucket, `${competition}/removed-bands.json`);
             console.error(removedBands);
             const applications = item.completedApplications.filter(app => !removedBands.removedBands.includes(app.bandName));
-            const schedule = await generateFridayNightBattleSchedule.generateFridayNightBattleSchedule(applications);
+            const schedule = await generateFridayNightBattleSchedule.generateFridayNightBattleSchedule(applications, orderedShowcaseBands);
             const s3PutRequest = s3Client.createPutPublicJsonRequest(
                 s3Bucket,
                 `${competition}/friday-night-schedule.json`,
