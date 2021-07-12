@@ -136,7 +136,7 @@ Resources:
       Handler: "renameFilesFromCompletedSubmissionsLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
-      Timeout: 200
+      Timeout: 600
       MemorySize: 2048
       Environment:
         Variables:
