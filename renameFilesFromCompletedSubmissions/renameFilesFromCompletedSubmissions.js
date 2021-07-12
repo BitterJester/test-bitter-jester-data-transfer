@@ -14,7 +14,8 @@ const tmpFilePath = '/tmp/'
 jotform.options({
     debug: true,
     apiKey: JOTFORM_API_KEY,
-    timeout: 10000
+    timeout: 10000,
+    limit: 1000
 });
 
 const finished = util.promisify(stream.finished);

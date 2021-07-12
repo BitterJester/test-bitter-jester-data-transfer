@@ -3,7 +3,7 @@ const _ = require('lodash');
 const MAX_NUMBER_OF_BANDS_PER_NIGHT = 7;
 
 function generateFridayNightBattleSchedule(completedApplications, orderedShowcaseBands) {
-    const appsWithoutShowcase = completedApplications.filter(app => !orderedShowcaseBands.includes(app.name));
+    const appsWithoutShowcase = completedApplications.filter(app => !orderedShowcaseBands.includes(app.bandName));
     const getAvailableBandsForNight = (fridayNightChoice) => {
         return appsWithoutShowcase.filter(app => app.firstChoiceFridayNight.includes(fridayNightChoice));
     };
