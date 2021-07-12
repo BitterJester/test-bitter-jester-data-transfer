@@ -15,7 +15,6 @@ jotform.options({
     debug: true,
     apiKey: JOTFORM_API_KEY,
     timeout: 10000,
-    limit: 1000
 });
 
 const finished = util.promisify(stream.finished);
@@ -76,7 +75,7 @@ async function getFormFiles(formId, competition, shouldDownloadFiles) {
         }
     }
 
-    const applications = await jotform.getFormSubmissions(formId);
+    const applications = await jotform.getFormSubmissions(formId, {limit: 1000});
     console.error(`Retrieved ${applications.length} applications`);
     const jotformAnswerMap = {
         bandLogoUrls: '254',
