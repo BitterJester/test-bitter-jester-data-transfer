@@ -34,9 +34,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: WriteToS3FromJotForm
-      Code:
-          S3Bucket: "bitter-jester-test"
-          S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
+      Code: ./
       Handler: "getCompletedSubmissionsLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
@@ -125,9 +123,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: GenerateFridayNightBattleSchedule
-      Code:
-        S3Bucket: "bitter-jester-test"
-        S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
+      Code: ./
       Handler: "generateFridayNightBattleScheduleLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
@@ -136,13 +132,11 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: RenameFilesFromCompletedSubmissions
-      Code:
-        S3Bucket: "bitter-jester-test"
-        S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
+      Code: ./
       Handler: "renameFilesFromCompletedSubmissionsLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
-      Timeout: 300
+      Timeout: 200
       MemorySize: 2048
       Environment:
         Variables:
@@ -152,9 +146,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: GetIncompleteApplicationsFromJotForm
-      Code:
-        S3Bucket: "bitter-jester-test"
-        S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
+      Code: ./
       Handler: "getIncompleteApplicationsFromJotFormLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
@@ -167,9 +159,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: GetJudgingApplications
-      Code:
-        S3Bucket: "bitter-jester-test"
-        S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
+      Code: ./
       Handler: "getJudgingApplicationsLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
@@ -220,9 +210,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: GetOriginalSongSubmissions
-      Code:
-        S3Bucket: "bitter-jester-test"
-        S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
+      Code: ./
       Handler: "getOriginalSongSubmissionsLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
@@ -235,9 +223,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: UpdateOriginalSongWeeklySchedule
-      Code:
-        S3Bucket: "bitter-jester-test"
-        S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
+      Code: ./
       Handler: "updateOriginalSongWeeklyScheduleLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
@@ -246,9 +232,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: CalculateScoresForEachOriginalSongInWeek
-      Code:
-        S3Bucket: "bitter-jester-test"
-        S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
+      Code: ./
       Handler: "calculateScoresForEachOriginalSongInWeekLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn
@@ -295,9 +279,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: AggregateCommentsForWeek
-      Code:
-        S3Bucket: "bitter-jester-test"
-        S3Key: "bitter-jester-data-transfer/test-bitter-jester-data-transfer.zip"
+      Code: ./
       Handler: "aggregateCommentsForWeekLambdaHandler.handler"
       Runtime: "nodejs12.x"
       Role: !GetAtt LambdaBasicAccessRole.Arn

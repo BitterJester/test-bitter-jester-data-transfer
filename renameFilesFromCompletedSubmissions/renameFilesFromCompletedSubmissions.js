@@ -77,6 +77,7 @@ async function getFormFiles(formId, competition, shouldDownloadFiles) {
     }
 
     const applications = await jotform.getFormSubmissions(formId);
+    console.error(`Retrieved ${applications.length} applications`);
     const jotformAnswerMap = {
         bandLogoUrls: '254',
         bandPhotosUrls: '253',
