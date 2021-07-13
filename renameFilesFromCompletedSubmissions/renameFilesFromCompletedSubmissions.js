@@ -147,8 +147,8 @@ async function getFormFiles(formId, competition, shouldDownloadFiles) {
                 const fileType = getFileType(stagePlotUrl);
                 const fileName = `${fileNameFormattedBandName}_Stage-Plot-${index + 1}.${fileType}`;
                 const s3FilePath = `${filePathForBand}${fileName}`;
-                const contentType = `image/${fileType}`;
-                await downloadFromJotformAndWriteToS3(fileName, fileType, stagePlotUrl, s3FilePath, contentType);
+                const contentType = fileType === 'pdf' ? `application/${fileType}` : `image/${fileType}`;
+                await downloadFromJotformAndWriteToS3(fileName, stagePlotUrl, fileType, s3FilePath, contentType);
                 allFiles.push(getUploadedFile(fileName, fileType, 'stage_plot', stagePlotUrl, app.bandName, contentType));
                 console.log(`done with stage plot ${s3FilePath}`)
             } catch (e) {
