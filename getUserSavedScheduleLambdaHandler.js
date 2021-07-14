@@ -20,13 +20,15 @@ exports.handler = async function (event) {
         );
         const schedule = new S3Client()
             .getObject('bitter-jester-test', `${competition}/user-friday-night-schedule.json`);
-
+        console.error(schedule);
         const updatedNights = [];
         for(let night of schedule.nights){
             const updatedBandsForNight = night.bands.map(band => submissions.completedApplications.find(sub => sub.bandName === band.bandName));
             updatedNights.push({...night, bands: updatedBandsForNight});
         }
-        return {responseCode: 200, body: {...schedule, nights: updatedNights}};
+        const body = {...schedule, nights: updatedNights};
+        console.error('body: ', body);
+        return {responseCode: 200, body: body};
     } catch (e){
         return e;
     }
