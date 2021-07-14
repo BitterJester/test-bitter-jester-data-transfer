@@ -18,7 +18,8 @@ exports.handler = async function (event) {
             `${competition}/${OUTPUT_FILE_NAME}`,
             formatForS3.format
         );
-        const schedule = new S3Client()
+        const s3Client = new S3Client();
+        const schedule = await s3Client
             .getObject('bitter-jester-test', `${competition}/user-friday-night-schedule.json`);
         console.error(schedule);
         const updatedNights = [];
