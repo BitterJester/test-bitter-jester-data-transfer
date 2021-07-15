@@ -6,9 +6,6 @@ class S3Client {
         console.log('constructing s3Client');
         const accessKeyId = process.env.AWS_ACCESS_ID;
         const secretAccessKey = process.env.AWS_SECRET_KEY;
-        console.log('values');
-        console.log(accessKeyId);
-        console.log(secretAccessKey);
         this.client = new AWS.S3({
             accessKeyId,
             secretAccessKey

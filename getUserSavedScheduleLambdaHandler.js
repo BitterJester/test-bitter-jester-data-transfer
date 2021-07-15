@@ -18,7 +18,8 @@ exports.handler = async function (event) {
         const submissions = await writeToS3FromJotForm.getFormSubmissions(
             BITTER_JESTER_COMPLETED_APPLICATIONS_JOTFORM_FORM_ID,
             `${competition}/${OUTPUT_FILE_NAME}`,
-            formatForS3.format
+            formatForS3.format,
+            s3Client
         );
         const schedule = await s3Client
             .getObject('bitter-jester-test', `${competition}/user-friday-night-schedule.json`);
@@ -32,6 +33,6 @@ exports.handler = async function (event) {
         console.error('body: ', updatedSchedule);
         return {responseCode: 200, body: updatedSchedule};
     } catch (e){
-        return e;
+        return {error: e, devMessage: 'THERE WAS AN ERROR'};
     }
 };
