@@ -25,7 +25,7 @@ class S3Client {
         })
     }
 
-    async getObject(bucket = "bitter-jester-test", key) {
+    async getObject(bucket = "bitter-jester-lake", key) {
         const params = {
             Bucket: bucket,
             Key: `competitions/${key}`
@@ -53,8 +53,8 @@ class S3Client {
             Key: `competitions/${filename}`,
             Body: contents,
             ContentType: contentType,
-            ACL: 'public-read',
-            CacheControl: 'max-age=60'
+            CacheControl: 'max-age=60',
+            ServerSideEncryption: 'AES256'
         };
     }
 

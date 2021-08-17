@@ -96,14 +96,6 @@ Resources:
               Ref: CheckJotFormForUpdatesSnsTopic
       Topics:
         - Ref: CheckJotFormForUpdatesSnsTopic
-  GenerateFridayNightBattleScheduleLambdaInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: "lambda:InvokeFunction"
-      Principal: "sns.amazonaws.com"
-      SourceArn:
-        Ref: BandApplicationsUpdatedSnsTopic
-      FunctionName: !GetAtt GenerateFridayNightBattleSchedule.Arn
   CheckJotFormForUpdatesSnsTopic:
     Type: AWS::SNS::Topic
     Properties:
@@ -119,15 +111,6 @@ Resources:
       SourceArn:
         Ref: CheckJotFormForUpdatesSnsTopic
       FunctionName: !GetAtt WriteToS3FromJotForm.Arn
-  GenerateFridayNightBattleSchedule:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: GenerateFridayNightBattleSchedule
-      Code: ./
-      Handler: "generateFridayNightBattleScheduleLambdaHandler.handler"
-      Runtime: "nodejs12.x"
-      Role: !GetAtt LambdaBasicAccessRole.Arn
-      Timeout: 60
   RenameFilesFromCompletedSubmissions:
     Type: AWS::Lambda::Function
     Properties:
@@ -347,13 +330,6 @@ Resources:
       ParentId: !GetAtt BitterJesterDataManagerApi.RootResourceId
       PathPart: '{competitionId}'
       RestApiId: !Ref BitterJesterDataManagerApi
-  UpdateCompetitionScheduleResource:
-    Type: AWS::ApiGateway::Resource
-    Properties:
-      ParentId:
-        Ref: CompetitionIdPathResource
-      PathPart: 'update-schedule'
-      RestApiId: !Ref BitterJesterDataManagerApi
   CompletedSubmissionsResource:
     Type: AWS::ApiGateway::Resource
     Properties:
@@ -424,9 +400,6 @@ Resources:
         Statement:
           - Effect: 'Allow'
             Action: 'lambda:*'
-            Resource: !GetAtt GenerateFridayNightBattleSchedule.Arn
-          - Effect: 'Allow'
-            Action: 'lambda:*'
             Resource: !GetAtt WriteToS3FromJotForm.Arn
           - Effect: 'Allow'
             Action: 'lambda:*'
@@ -439,13 +412,6 @@ Resources:
             Resource: !GetAtt GetUserSavedSchedule.Arn
       Roles:
         - !Ref ApiGatewayIamRole
-  LambdaApiGatewayInvoke:
-    Type: "AWS::Lambda::Permission"
-    Properties:
-      Action: "lambda:InvokeFunction"
-      FunctionName: !GetAtt "GenerateFridayNightBattleSchedule.Arn"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${BitterJesterDataManagerApi}/*/*
   LambdaApiGatewayInvokeCompletedSubmissions:
     Type: "AWS::Lambda::Permission"
     Properties:
@@ -474,45 +440,6 @@ Resources:
       FunctionName: !GetAtt "GetUserSavedSchedule.Arn"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${BitterJesterDataManagerApi}/*/*
-  UpdateCompetitionScheduleGatewayMethod:
-    Type: AWS::ApiGateway::Method
-    Properties:
-      ApiKeyRequired: false
-      AuthorizationType: NONE
-      HttpMethod: GET
-      RequestParameters:
-        method.request.path.competitionId: true
-      Integration:
-        Credentials: !GetAtt ApiGatewayIamRole.Arn
-        IntegrationHttpMethod: POST
-        IntegrationResponses:
-          - ResponseTemplates: { "application/json": "" }
-            ResponseParameters:
-              method.response.header.X-Requested-With: "'*'"
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,x-requested-with'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            StatusCode: 200
-        PassthroughBehavior: WHEN_NO_TEMPLATES
-        RequestTemplates:
-          application/json: "{ \"competitionId\": \"$input.params('competitionId')\", \"lastSaved\": \"$input.params('lastSaved')\", \"orderedShowcaseBands\": \"$input.params('orderedShowcaseBands')\"}"
-        TimeoutInMillis: 29000
-        Type: AWS
-        Uri: !Sub
-          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations'
-          - lambdaArn: !GetAtt "GenerateFridayNightBattleSchedule.Arn"
-      MethodResponses:
-        - ResponseModels:
-            application/json: 'Empty'
-          ResponseParameters:
-            method.response.header.X-Requested-With: false
-            method.response.header.Access-Control-Allow-Headers: false
-            method.response.header.Access-Control-Allow-Methods: false
-            method.response.header.Access-Control-Allow-Origin: false
-          StatusCode: 200
-      OperationName: 'update competition schedule'
-      ResourceId: !Ref UpdateCompetitionScheduleResource
-      RestApiId: !Ref BitterJesterDataManagerApi
   WriteToS3FromJotFormGatewayMethod:
     Type: AWS::ApiGateway::Method
     Properties:
@@ -676,9 +603,6 @@ Outputs:
   GetCompletedSubmissionsEndpoint:
     Description: "API Gateway endpoint URL for Prod stage for Completed Submissions Function"
     Value: !Sub "https://${BitterJesterDataManagerApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiGatewayStage}/{competitionId}/completed-submissions"
-  UpdateCompetitionScheduleEndpoint:
-    Description: "API Gateway endpoint URL for Prod stage for Update Schedule Function"
-    Value: !Sub "https://${BitterJesterDataManagerApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiGatewayStage}/{competitionId}/update-schedule"
   GetRenamedFilesFromCompletedSubmissionsEndpoint:
     Description: "API Gateway endpoint URL for Prod stage for Rename Files Function"
     Value: !Sub "https://${BitterJesterDataManagerApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiGatewayStage}/{competitionId}/renamed-files"

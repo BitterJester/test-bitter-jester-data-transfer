@@ -1,12 +1,12 @@
 require('dotenv').config();
 const S3Client = require('s3Client').S3Client;
 
-const BUCKET = 'bitter-jester-test';
+const BUCKET = 'bitter-jester-lake';
 const FILE_TO_UPDATE = 'original-song-submissions.json';
 
 exports.handler = async function (event) {
     const s3Client = new S3Client();
-    const currentSchedule = await s3Client.getObject('bitter-jester-test', FILE_TO_UPDATE);
+    const currentSchedule = await s3Client.getObject('bitter-jester-lake', FILE_TO_UPDATE);
 
     const originalSongs = currentSchedule.originalSongs;
 

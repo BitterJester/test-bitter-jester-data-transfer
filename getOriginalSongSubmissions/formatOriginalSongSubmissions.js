@@ -31,7 +31,7 @@ const format = async (applications) => {
             return item;
         });
 
-    const originalSongSubmissions = await new S3Client().getObject('bitter-jester-test', 'original-song-submissions.json');
+    const originalSongSubmissions = await new S3Client().getObject('bitter-jester-lake', 'original-song-submissions.json');
     extractedApplications.forEach(song => {
         const songForBand = originalSongSubmissions.originalSongs.filter(app => app.bandName === song.bandName);
         const numberOfSongsForBand = songForBand.length;

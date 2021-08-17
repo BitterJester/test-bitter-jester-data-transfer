@@ -8,9 +8,9 @@ exports.handler = async function (event) {
     console.log('initializing s3client');
     const s3Client = new S3Client();
     console.log('S3Client Initialized.');
-    const judgesComments = await s3Client.getObjectsInFolder('bitter-jester-test', 'judges-comments/');
+    const judgesComments = await s3Client.getObjectsInFolder('bitter-jester-lake', 'judges-comments/');
 
-    const allJudges = await s3Client.getObjectsInFolder('bitter-jester-test', 'judges-info.json');
+    const allJudges = await s3Client.getObjectsInFolder('bitter-jester-lake', 'judges-info.json');
     const listOfJudges = allJudges[0].judges;
     const judgesForWeek = listOfJudges.filter(judge => judge.week === weekAsNumber);
 
@@ -47,7 +47,7 @@ exports.handler = async function (event) {
 
     const allCommentsAreSubmitted = judgesComments.length ===  judgesForWeek.length*3*14;
     await s3Client.put(s3Client.createPutPublicJsonRequest(
-        'bitter-jester-test',
+        'bitter-jester-lake',
         `${weekPath}/aggregated-judges-comments.json`,
         JSON.stringify({comments: judgesCommentsForWeek, allCommentsAreSubmitted, judgesWhoHaveNotSubmittedAllComments, numberOfJudgesWhoHaveNotSubmittedAllComments: judgesWhoHaveNotSubmittedAllComments.length})
     ));

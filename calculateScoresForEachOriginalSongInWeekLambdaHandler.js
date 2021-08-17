@@ -7,7 +7,7 @@ exports.handler = async function (event) {
     console.log('week: ', weekAsNumber);
     const s3Client = new S3Client();
 
-    const overallSongRankings = await s3Client.getObjectsInFolder('bitter-jester-test', `${weekPath}/overall-song-rankings/`);
+    const overallSongRankings = await s3Client.getObjectsInFolder('bitter-jester-lake', `${weekPath}/overall-song-rankings/`);
 
     const finalSongRankings = overallSongRankings.filter(ranking => ranking.isFinalRanking);
 
@@ -44,7 +44,7 @@ exports.handler = async function (event) {
         .map(ranking => ranking.judge);
 
     await s3Client.put(s3Client.createPutPublicJsonRequest(
-        'bitter-jester-test',
+        'bitter-jester-lake',
         `${weekPath}/song-ranking-totals.json`,
         JSON.stringify({
             totalScores: scoreForEachBand,

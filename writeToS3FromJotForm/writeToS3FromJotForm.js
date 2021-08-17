@@ -3,7 +3,7 @@ const jotform = require('jotform');
 const S3Client = require('../s3Client').S3Client;
 
 const JOTFORM_API_KEY = process.env.JOTFORM_API_KEY;
-const s3Bucket = 'bitter-jester-test';
+const s3Bucket = 'bitter-jester-lake';
 
 jotform.options({
     debug: true,
